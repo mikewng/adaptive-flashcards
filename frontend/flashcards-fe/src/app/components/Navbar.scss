@@ -1,0 +1,74 @@
+.fc-navbar-cpnt-wrapper {
+    background: white;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 1rem 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+
+    .fc-navbar-content {
+        max-width: 1280px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .fc-navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+
+            .fc-navbar-icon {
+                width: 32px;
+                height: 32px;
+                color: #6366f1;
+            }
+
+            .fc-navbar-title {
+                font-size: 1.5rem;
+                font-weight: bold;
+                background: linear-gradient(90deg, #6366f1 0%, #9333ea 100%);
+                -webkit-background-clip: text;
+                background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+        }
+
+        .fc-navbar-links {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+
+            @media (max-width: 768px) {
+                display: none;
+            }
+
+            .fc-nav-link {
+                color: #4b5563;
+                text-decoration: none;
+                font-weight: 500;
+                transition: color 0.2s ease;
+
+                &:hover {
+                    color: #6366f1;
+                }
+            }
+
+            .fc-nav-button {
+                padding: 0.5rem 1.5rem;
+                background: linear-gradient(90deg, #6366f1 0%, #9333ea 100%);
+                color: white;
+                border: none;
+                border-radius: 0.5rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: transform 0.2s ease;
+
+                &:hover {
+                    transform: scale(1.05);
+                }
+            }
+        }
+    }
+}

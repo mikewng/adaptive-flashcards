@@ -1,0 +1,51 @@
+.fc-feature-card {
+    padding: 1.5rem;
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.2s ease;
+}
+
+.fc-feature-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+
+    svg {
+        width: 24px;
+        height: 24px;
+    }
+}
+
+.fc-feature-icon-indigo {
+    background: #e0e7ff;
+
+    svg {
+        color: #6366f1;
+    }
+}
+
+.fc-feature-icon-purple {
+    background: #fae8ff;
+
+    svg {
+        color: #9333ea;
+    }
+}
+
+.fc-feature-title {
+    font-weight: 600;
+    font-size: 1.125rem;
+    margin: 0 0 0.5rem 0;
+}
+
+.fc-feature-description {
+    color: #4b5563;
+    font-size: 0.875rem;
+    margin: 0;
+    line-height: 1.5;
+}
