@@ -1,7 +1,10 @@
 from sqlalchemy import Column, Integer, String, Text, ForeignKey, DateTime, Boolean, Float
 from sqlalchemy.orm import relationship
+from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime, timezone
-from .base import Base
+
+Base = declarative_base()
+metadata = Base.metadata
 
 class User(Base):
     __tablename__ = "users"
