@@ -5,7 +5,7 @@ class Settings(BaseSettings):
     API_V1_PREFIX: str = "/api"
 
     JWT_SECRET: str = "ENV FILE"
-    JWT_ALG: str = "HS265"
+    JWT_ALG: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24
 
     DATABASE_URL: str = ""

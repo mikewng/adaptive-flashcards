@@ -1,16 +1,18 @@
 from logging.config import fileConfig
-from sqlalchemy import engine_from_config, pool
 from alembic import context
+from sqlalchemy import engine_from_config, pool
 
-# Backend Specific Models
-from app.models.models import Base
+from app.models import Base
+import app.models.models as _models
 from app.core.config import settings
 
 config = context.config
-if config.config_file_name is not None:
+if config.config_file_name:
     fileConfig(config.config_file_name)
 
 target_metadata = Base.metadata
+
+print("DB URL in env.py:", settings.DATABASE_URL)
 
 def run_migrations_offline():
     context.configure(

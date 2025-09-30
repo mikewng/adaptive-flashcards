@@ -1,3 +1,5 @@
 sqlalchemy==2.0.43
 fastapi==0.118.0
 alembic==1.16.5
+pydantic_settings==2.11.0
+pyscopg==3.2.10
