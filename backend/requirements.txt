@@ -1,6 +1,11 @@
-sqlalchemy==2.0.43
 fastapi==0.118.0
-alembic==1.16.5
-pydantic_settings==2.11.0
-pyscopg==3.2.10
 uvicorn==0.37.0
+sqlalchemy==2.0.43
+alembic==1.16.5
+pyscopg[binary]==3.2.10
+
+pydantic_settings==2.11.0
+
+python-jose[cryptography]==3.5.0
+passlib[bcrypt]==1.7.4
+pypdf==6.1.1

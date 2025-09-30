@@ -10,6 +10,7 @@ app.include_router(decks_router.router, prefix=f"{settings.API_V1_PREFIX}/decks"
 app.include_router(cards_router.router, prefix=f"{settings.API_V1_PREFIX}/cards", tags=["cards"])
 app.include_router(study_router.router, prefix=f"{settings.API_V1_PREFIX}/study", tags=["study"])
 
+
 @app.get("/")
 def health_check():
     return {"status": "ok"}

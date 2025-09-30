@@ -4,7 +4,7 @@ from app.core.database import get_db
 from app.models.models import Deck
 from app.schemas.deck import DeckCreate, DeckRead
 
-router = APIRouter(prefix="/decks")
+router = APIRouter()
 
 @router.post("/", response_model=DeckRead)
 def create_deck(payload: DeckCreate, db: Session = Depends(get_db)):
