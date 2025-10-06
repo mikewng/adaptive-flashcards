@@ -6,6 +6,7 @@ class FlashCardApiService {
     async createDeck(deckContent) {
         return apiWrapper.request('/decks', {
             method: 'POST',
+            body: JSON.stringify(deckContent),
         });
     }
 
