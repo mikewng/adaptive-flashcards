@@ -10,9 +10,8 @@ const Footer = () => {
                     <a href="#" className="fc-footer-link">Phone</a>
                 </div>
                 <div className="fc-footer-section">
-                    <h4 className="fc-footer-heading">Legal</h4>
-                    <a href="#" className="fc-footer-link">Privacy</a>
-                    <a href="#" className="fc-footer-link">Terms</a>
+                    <h4 className="fc-footer-heading">About</h4>
+                    <a href="#" className="fc-footer-link">Team</a>
                 </div>
             </div>
             <div className="fc-footer-bottom">

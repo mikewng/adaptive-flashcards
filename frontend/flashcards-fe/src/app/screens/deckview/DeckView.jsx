@@ -4,11 +4,15 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { flashcardApiService } from '../../utils/flashcardApis';
 import './DeckView.scss';
+import ModalComponent from '@/app/components/ModalComponent';
+import DeckUpdateModal from './components/DeckUpdateModal';
 
 const DeckView = () => {
     const [decks, setDecks] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [openDeck, setOpenDeck] = useState(null);
+    const [openCreateModal, setOpenCreateModal] = useState(false);
 
     const router = useRouter();
 
@@ -31,12 +35,13 @@ const DeckView = () => {
     }, []);
 
     const handleDeckClick = (deckId) => {
-        // Change to view careds
+        // Change to view cards
         router.push(`/deck/${deckId}/study`);
     };
 
     const handleCreateDeck = () => {
-        router.push('/deck/create');
+        // Change to open modal
+        setOpenCreateModal(true)
     };
 
     if (loading) {
@@ -57,6 +62,12 @@ const DeckView = () => {
 
     return (
         <div className="fc-deckview-screen-wrapper">
+            {
+                openCreateModal &&
+                <ModalComponent title={"Create Deck"} onClose={() => setOpenCreateModal(false)}>
+                    <DeckUpdateModal />
+                </ModalComponent>
+            }
             <div className="fc-deck-header">
                 <h1>My Decks</h1>
                 <button className="fc-create-deck-btn" onClick={handleCreateDeck}>
