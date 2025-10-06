@@ -1,5 +1,7 @@
+'use client'
+
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import { flashcardApiService } from '../../utils/flashcardApis';
 import './DeckView.scss';
 
@@ -8,7 +10,7 @@ const DeckView = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const navigate = useNavigate();
+    const router = useRouter();
 
     useEffect(() => {
         const fetchDecks = async () => {
@@ -29,11 +31,11 @@ const DeckView = () => {
     }, []);
 
     const handleDeckClick = (deckId) => {
-        navigate(`/deck/${deckId}/study`);
+        router.push(`/deck/${deckId}/study`);
     };
 
     const handleCreateDeck = () => {
-        navigate('/deck/create');
+        router.push('/deck/create');
     };
 
     if (loading) {

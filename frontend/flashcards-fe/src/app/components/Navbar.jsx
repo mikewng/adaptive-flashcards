@@ -1,18 +1,21 @@
+'use client'
+
 import "./Navbar.scss"
-import { Link, useNavigate } from "react-router-dom";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useAuth } from "../context/userAuthContext";
 
 const Navbar = () => {
-    const navigate = useNavigate();
+    const router = useRouter();
     const { user, isAuthenticated, logout } = useAuth();
 
     const handleLoginClick = () => {
-        navigate("/login");
+        router.push("/login");
     };
 
     const handleLogout = () => {
         logout();
-        navigate("/");
+        router.push("/");
     };
 
     return (
@@ -25,13 +28,13 @@ const Navbar = () => {
                 </div>
                 <div className="fc-navbar-links">
                     <div className="fc-nav-option">
-                        <Link to="/" className="fc-nav-link">Home</Link>
+                        <Link href="/" className="fc-nav-link">Home</Link>
                     </div>
                     <div className="fc-nav-option">
                         <div className="fc-nav-link">Create...</div>
                     </div>
                     <div className="fc-nav-option">
-                        <Link to="/decks" className="fc-nav-link">My Decks</Link>
+                        <Link href="/decks" className="fc-nav-link">My Decks</Link>
                     </div>
                     <div className="fc-nav-account-container">
                         {isAuthenticated ? (
