@@ -28,11 +28,14 @@ const Navbar = () => {
                 </div>
                 <div className="fc-navbar-links">
                     {
+                        !isAuthenticated &&
+                        <div className="fc-nav-option">
+                            <Link href="/" className="fc-nav-link">Home</Link>
+                        </div>
+                    }
+                    {
                         isAuthenticated &&
                         <div className="fc-auth-links">
-                            <div className="fc-nav-option">
-                                <Link href="/" className="fc-nav-link">Home</Link>
-                            </div>
                             <div className="fc-nav-option">
                                 <div className="fc-nav-link">Create...</div>
                             </div>

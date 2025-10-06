@@ -6,7 +6,7 @@ const Landing = ({ }) => {
     const router = useRouter();
 
     const handleLoginClick = () => {
-        router.push("/login")
+        router.push("pages/login")
     }
 
     return (

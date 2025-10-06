@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../context/userAuthContext';
-import './Login.css';
+import './Login.scss';
 
 const Login = () => {
     const [isLogin, setIsLogin] = useState(true);
@@ -57,7 +57,6 @@ const Login = () => {
                 : await register(email, password);
 
             if (result.success) {
-                // Redirect to home/decks page after successful login
                 router.push('/pages/decks');
             } else {
                 setFormError(result.error || 'Authentication failed');
