@@ -1,64 +1,84 @@
-import { useState } from 'react';
-import CardComponent from './components/CardComponent';
+import { useState, useEffect } from 'react';
+import { useNavigationContext } from '../../context/useNavigationContext';
+import { flashcardApiService } from '../../utils/flashcardApis';
+import './DeckView.scss';
 
 const DeckView = () => {
-    // Sample flashcard data - replace with your actual data
-    const [cards] = useState([
-        { id: 1, front: 'What is React?', back: 'A JavaScript library for building user interfaces' },
-        { id: 2, front: 'What is a component?', back: 'A reusable piece of UI that can manage its own state and logic' },
-        { id: 3, front: 'What is JSX?', back: 'A syntax extension for JavaScript that looks similar to HTML' },
-    ]);
+    const [decks, setDecks] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    const [currentIndex, setCurrentIndex] = useState(0);
+    const { setNavState } = useNavigationContext();
 
-    const handleNext = () => {
-        if (currentIndex < cards.length - 1) {
-            setCurrentIndex(currentIndex + 1);
-        }
+    useEffect(() => {
+        const fetchDecks = async () => {
+            try {
+                setLoading(true);
+                const response = await flashcardApiService.getDecks();
+                setDecks(response);
+                setError(null);
+            } catch (err) {
+                console.error('Error fetching decks:', err);
+                setError('Failed to load decks');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchDecks();
+    }, []);
+
+    const handleDeckClick = (deckId) => {
     };
 
-    const handlePrevious = () => {
-        if (currentIndex > 0) {
-            setCurrentIndex(currentIndex - 1);
-        }
+    const handleCreateDeck = () => {
     };
+
+    if (loading) {
+        return (
+            <div className="fc-deckview-screen-wrapper">
+                <div className="fc-loading">Loading decks...</div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="fc-deckview-screen-wrapper">
+                <div className="fc-error">{error}</div>
+            </div>
+        );
+    }
 
     return (
         <div className="fc-deckview-screen-wrapper">
             <div className="fc-deck-header">
-                <h1>Deck Name</h1>
-                <p className="fc-card-progress">
-                    Card {currentIndex + 1} of {cards.length}
-                </p>
+                <h1>My Decks</h1>
+                <button className="fc-create-deck-btn" onClick={handleCreateDeck}>
+                    + Create New Deck
+                </button>
             </div>
 
-            <div className="fc-deck-content">
-                {cards.length > 0 ? (
-                    <CardComponent
-                        front={cards[currentIndex].front}
-                        back={cards[currentIndex].back}
-                        key={cards[currentIndex].id}
-                    />
+            <div className="fc-deck-list">
+                {decks.length > 0 ? (
+                    decks.map((deck) => (
+                        <div
+                            key={deck.id}
+                            className="fc-deck-card"
+                            onClick={() => handleDeckClick(deck.id)}
+                        >
+                            <h3 className="fc-deck-name">{deck.name}</h3>
+                            <div className="fc-deck-info">
+                                <span className="fc-card-count">{`Card Count: ${deck.cardCount ?? 0}`}</span>
+                                <span className="fc-last-studied">Last studied: {deck?.lastStudied ?? "N/A"}</span>
+                            </div>
+                        </div>
+                    ))
                 ) : (
-                    <p className="fc-no-cards">No cards in this deck</p>
+                    <div className="fc-no-decks">
+                        <p>No decks yet. Create your first deck to get started!</p>
+                    </div>
                 )}
-            </div>
-
-            <div className="fc-deck-controls">
-                <button
-                    className="fc-nav-btn fc-prev-btn"
-                    onClick={handlePrevious}
-                    disabled={currentIndex === 0}
-                >
-                    ← Previous
-                </button>
-                <button
-                    className="fc-nav-btn fc-next-btn"
-                    onClick={handleNext}
-                    disabled={currentIndex === cards.length - 1}
-                >
-                    Next →
-                </button>
             </div>
         </div>
     );

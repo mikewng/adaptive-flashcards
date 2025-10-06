@@ -7,6 +7,9 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <head>
         <title>Adaptive Flashcards</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />
+        <link href="https://fonts.googleapis.com/css2?family=Alan+Sans:wght@300..900&family=Sen:wght@400..800&display=swap" rel="stylesheet" />
       </head>
       <body>
         <AuthProvider>
