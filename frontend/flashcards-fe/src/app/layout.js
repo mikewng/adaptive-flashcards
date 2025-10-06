@@ -1,5 +1,6 @@
 'use client'
 import "./App.scss"
+import { AuthProvider } from './context/userAuthContext'
 
 export default function RootLayout({ children }) {
   return (
@@ -8,7 +9,9 @@ export default function RootLayout({ children }) {
         <title>Adaptive Flashcards</title>
       </head>
       <body>
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

@@ -1,8 +1,19 @@
 import "./Navbar.scss"
 import { useNavigationContext } from "../context/useNavigationContext";
+import { useAuth } from "../context/userAuthContext";
 
 const Navbar = () => {
     const { setNavState } = useNavigationContext();
+    const { user, isAuthenticated, logout } = useAuth();
+
+    const handleLoginClick = () => {
+        setNavState("Login");
+    };
+
+    const handleLogout = () => {
+        logout();
+        setNavState("Home");
+    };
 
     return (
         <nav className="fc-navbar-cpnt-wrapper">
@@ -23,8 +34,18 @@ const Navbar = () => {
                         <div className="fc-nav-link">My Decks</div>
                     </div>
                     <div className="fc-nav-account-container">
-                        <button className="fc-nav-button">Sign In</button>
-                        <button className="fc-nav-button">Register...</button>
+                        {isAuthenticated ? (
+                            <>
+                                <span className="fc-nav-user-email">{user?.email}</span>
+                                <button className="fc-nav-button" onClick={handleLogout}>
+                                    Logout
+                                </button>
+                            </>
+                        ) : (
+                            <button className="fc-nav-button" onClick={handleLoginClick}>
+                                Sign In
+                            </button>
+                        )}
                     </div>
                 </div>
             </div>
