@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect } from 'react';
-import { apiService } from '../services/flashcardApis';
+import { apiService } from '../utils/flashcardApis';
 
 const AuthContext = createContext(null);
 
