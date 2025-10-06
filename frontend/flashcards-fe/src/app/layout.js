@@ -1,6 +1,9 @@
 'use client'
 import "./App.scss"
+import "./screens/layout/BaseLayout.scss"
 import { AuthProvider } from './context/userAuthContext'
+import Navbar from './components/Navbar'
+import Footer from './components/Footer'
 
 export default function RootLayout({ children }) {
   return (
@@ -13,7 +16,13 @@ export default function RootLayout({ children }) {
       </head>
       <body>
         <AuthProvider>
-          {children}
+          <div className="fc-baselayout-wrapper">
+            <Navbar />
+            <main className="fc-screen-container">
+              {children}
+            </main>
+            <Footer />
+          </div>
         </AuthProvider>
       </body>
     </html>

@@ -39,6 +39,12 @@
             align-items: center;
             gap: 2rem;
 
+            .fc-auth-links {
+                display: flex;
+                align-items: center;
+                gap: 2rem;
+            }
+
             @media (max-width: 768px) {
                 display: none;
             }

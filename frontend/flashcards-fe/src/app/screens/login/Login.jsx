@@ -58,7 +58,7 @@ const Login = () => {
 
             if (result.success) {
                 // Redirect to home/decks page after successful login
-                router.push('/decks');
+                router.push('/pages/decks');
             } else {
                 setFormError(result.error || 'Authentication failed');
             }

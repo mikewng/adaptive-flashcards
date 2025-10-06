@@ -1,14 +1,17 @@
 import FeatureCard from "@/app/components/FeatureCard"
 import "./Landing.scss"
+import { useRouter } from "next/navigation";
 
 const Landing = ({ }) => {
+    const router = useRouter();
+
+    const handleLoginClick = () => {
+        router.push("/login")
+    }
+
     return (
         <div className="fc-landing-screen-wrapper">
             <div className="fc-hero-section">
-                <div className="fc-logo-icon">
-                    FC Logo
-                </div>
-
                 <div className="fc-heading">
                     <h1 className="fc-title">Adaptive Flashcards</h1>
                     <p className="fc-subtitle">
@@ -17,8 +20,7 @@ const Landing = ({ }) => {
                 </div>
 
                 <div className="fc-cta-buttons">
-                    <button className="fc-btn fc-btn-primary">Login</button>
-                    <button className="fc-btn fc-btn-secondary">Register...</button>
+                    <button className="fc-btn fc-btn-primary" onClick={handleLoginClick}>Get Started...</button>
                 </div>
 
                 <div className="fc-features">

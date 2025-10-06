@@ -10,7 +10,7 @@ const Navbar = () => {
     const { user, isAuthenticated, logout } = useAuth();
 
     const handleLoginClick = () => {
-        router.push("/login");
+        router.push("/pages/login");
     };
 
     const handleLogout = () => {
@@ -27,15 +27,21 @@ const Navbar = () => {
                     <span className="fc-navbar-title">Adaptive Flashcards</span>
                 </div>
                 <div className="fc-navbar-links">
-                    <div className="fc-nav-option">
-                        <Link href="/" className="fc-nav-link">Home</Link>
-                    </div>
-                    <div className="fc-nav-option">
-                        <div className="fc-nav-link">Create...</div>
-                    </div>
-                    <div className="fc-nav-option">
-                        <Link href="/decks" className="fc-nav-link">My Decks</Link>
-                    </div>
+                    {
+                        isAuthenticated &&
+                        <div className="fc-auth-links">
+                            <div className="fc-nav-option">
+                                <Link href="/" className="fc-nav-link">Home</Link>
+                            </div>
+                            <div className="fc-nav-option">
+                                <div className="fc-nav-link">Create...</div>
+                            </div>
+                            <div className="fc-nav-option">
+                                <Link href="/pages/decks" className="fc-nav-link">My Decks</Link>
+                            </div>
+                        </div>
+                    }
+
                     <div className="fc-nav-account-container">
                         {isAuthenticated ? (
                             <>

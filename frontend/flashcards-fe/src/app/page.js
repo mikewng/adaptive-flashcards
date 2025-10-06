@@ -1,18 +1,7 @@
 'use client'
 
-import Navbar from "@/app/components/Navbar";
-import Footer from "@/app/components/Footer";
 import Landing from "./screens/landing/Landing";
-import "./screens/layout/BaseLayout.scss";
 
 export default function Home() {
-  return (
-    <div className="fc-baselayout-wrapper">
-      <Navbar />
-      <main className="fc-screen-container">
-        <Landing />
-      </main>
-      <Footer />
-    </div>
-  );
+  return <Landing />;
 }

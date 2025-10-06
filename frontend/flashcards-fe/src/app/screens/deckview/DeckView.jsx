@@ -31,6 +31,7 @@ const DeckView = () => {
     }, []);
 
     const handleDeckClick = (deckId) => {
+        // Change to view careds
         router.push(`/deck/${deckId}/study`);
     };
 
