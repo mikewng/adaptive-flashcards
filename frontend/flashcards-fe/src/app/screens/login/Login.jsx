@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/userAuthContext';
-import { useNavigationContext } from '../../context/useNavigationContext';
 import './Login.css';
 
 const Login = () => {
@@ -14,7 +14,7 @@ const Login = () => {
     const [isLoading, setIsLoading] = useState(false);
 
     const { login, register, error: authError } = useAuth();
-    const { setNavState } = useNavigationContext();
+    const navigate = useNavigate();
 
     const validateForm = () => {
         if (!email || !password) {
@@ -58,7 +58,7 @@ const Login = () => {
 
             if (result.success) {
                 // Redirect to home/decks page after successful login
-                setNavState('Decks');
+                navigate('/decks');
             } else {
                 setFormError(result.error || 'Authentication failed');
             }

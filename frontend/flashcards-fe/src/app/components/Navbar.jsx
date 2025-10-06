@@ -1,18 +1,18 @@
 import "./Navbar.scss"
-import { useNavigationContext } from "../context/useNavigationContext";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/userAuthContext";
 
 const Navbar = () => {
-    const { setNavState } = useNavigationContext();
+    const navigate = useNavigate();
     const { user, isAuthenticated, logout } = useAuth();
 
     const handleLoginClick = () => {
-        setNavState("Login");
+        navigate("/login");
     };
 
     const handleLogout = () => {
         logout();
-        setNavState("Home");
+        navigate("/");
     };
 
     return (
@@ -24,14 +24,14 @@ const Navbar = () => {
                     <span className="fc-navbar-title">Adaptive Flashcards</span>
                 </div>
                 <div className="fc-navbar-links">
-                    <div className="fc-nav-option" onClick={() => setNavState("Home")}>
-                        <div className="fc-nav-link">Home</div>
+                    <div className="fc-nav-option">
+                        <Link to="/" className="fc-nav-link">Home</Link>
                     </div>
                     <div className="fc-nav-option">
                         <div className="fc-nav-link">Create...</div>
                     </div>
-                    <div className="fc-nav-option" onClick={() => setNavState("Decks")}>
-                        <div className="fc-nav-link">My Decks</div>
+                    <div className="fc-nav-option">
+                        <Link to="/decks" className="fc-nav-link">My Decks</Link>
                     </div>
                     <div className="fc-nav-account-container">
                         {isAuthenticated ? (

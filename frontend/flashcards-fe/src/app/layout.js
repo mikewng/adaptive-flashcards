@@ -1,6 +1,7 @@
 'use client'
 import "./App.scss"
 import { AuthProvider } from './context/userAuthContext'
+import { BrowserRouter } from 'react-router-dom'
 
 export default function RootLayout({ children }) {
   return (
@@ -12,9 +13,11 @@ export default function RootLayout({ children }) {
         <link href="https://fonts.googleapis.com/css2?family=Alan+Sans:wght@300..900&family=Sen:wght@400..800&display=swap" rel="stylesheet" />
       </head>
       <body>
-        <AuthProvider>
-          {children}
-        </AuthProvider>
+        <BrowserRouter>
+          <AuthProvider>
+            {children}
+          </AuthProvider>
+        </BrowserRouter>
       </body>
     </html>
   );

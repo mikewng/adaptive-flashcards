@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigationContext } from '../../context/useNavigationContext';
+import { useNavigate } from 'react-router-dom';
 import { flashcardApiService } from '../../utils/flashcardApis';
 import './DeckView.scss';
 
@@ -8,7 +8,7 @@ const DeckView = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const { setNavState } = useNavigationContext();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchDecks = async () => {
@@ -29,9 +29,11 @@ const DeckView = () => {
     }, []);
 
     const handleDeckClick = (deckId) => {
+        navigate(`/deck/${deckId}/study`);
     };
 
     const handleCreateDeck = () => {
+        navigate('/deck/create');
     };
 
     if (loading) {
