@@ -4,10 +4,13 @@ import "./Navbar.scss"
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../context/userAuthContext";
+import { useState } from "react";
+import DeckUpdateModal from "../screens/deckview/components/DeckUpdateModal";
 
 const Navbar = () => {
     const router = useRouter();
     const { user, isAuthenticated, logout } = useAuth();
+    const [createDeck, setCreateDeck] = useState(false);
 
     const handleLoginClick = () => {
         router.push("/pages/login");
@@ -18,8 +21,16 @@ const Navbar = () => {
         router.push("/");
     };
 
+    const handleModalClose = () => {
+        setCreateDeck(false)
+    }
+
     return (
         <nav className="fc-navbar-cpnt-wrapper">
+            {
+                createDeck &&
+                <DeckUpdateModal onClose={handleModalClose} />
+            }
             <div className="fc-navbar-content">
                 <div className="fc-navbar-brand">
                     <svg className="fc-navbar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -37,7 +48,12 @@ const Navbar = () => {
                         isAuthenticated &&
                         <div className="fc-auth-links">
                             <div className="fc-nav-option">
-                                <div className="fc-nav-link">Create...</div>
+                                <div
+                                    className="fc-nav-link"
+                                    onClick={() => { setCreateDeck(true) }}
+                                >
+                                    Create...
+                                </div>
                             </div>
                             <div className="fc-nav-option">
                                 <Link href="/pages/decks" className="fc-nav-link">My Decks</Link>
