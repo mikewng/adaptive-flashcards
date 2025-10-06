@@ -1,75 +1,75 @@
-// API Configuration and Helper Functions
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+import { apiWrapper } from "./apiWrapper";
 
-class ApiService {
-    async request(endpoint, options = {}) {
-        const url = `${API_BASE_URL}${endpoint}`;
-        const token = localStorage.getItem('access_token');
+class FlashCardApiService {
 
-        const config = {
-            ...options,
-            headers: {
-                'Content-Type': 'application/json',
-                ...options.headers,
-                ...(token ? { Authorization: `Bearer ${token}` } : {}),
-            },
-        };
-
-        try {
-            const response = await fetch(url, config);
-
-            if (!response.ok) {
-                const error = await response.json().catch(() => ({ detail: 'An error occurred' }));
-                throw new Error(error.detail || `HTTP error! status: ${response.status}`);
-            }
-
-            return await response.json();
-        } catch (error) {
-            console.error('API request failed:', error);
-            throw error;
-        }
-    }
-
-    // Authentication endpoints
-    async login(email, password) {
-        const formData = new URLSearchParams();
-        formData.append('username', email);
-        formData.append('password', password);
-
-        return this.request('/auth/login', {
+    // DECK APIs
+    async createDeck(deckContent) {
+        return apiWrapper.request('/decks', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: formData,
         });
     }
 
-    async register(email, password) {
-        return this.request('/auth/register', {
-            method: 'POST',
-            body: JSON.stringify({ email, password }),
-        });
-    }
-
-    async getCurrentUser() {
-        return this.request('/auth/me', {
-            method: 'GET',
-        });
-    }
-
-    // Deck endpoints (for future use)
     async getDecks() {
-        return this.request('/decks', {
+        return apiWrapper.request('/decks', {
             method: 'GET',
         });
     }
 
-    async getDeck(deckId) {
-        return this.request(`/decks/${deckId}`, {
+    async getDeckById(deckId) {
+        return apiWrapper.request(`/decks/${deckId}`, {
             method: 'GET',
+        });
+    }
+
+    async deleteDeckById(deckId) {
+        return apiWrapper.request(`/decks/${deckId}`, {
+            method: 'DELETE',
+        });
+    }
+
+    // CARD APIs
+    async createCard(deckId, cardContent) {
+        return apiWrapper.request(`/cards/${deckId}`, {
+            method: 'POST',
+        });
+    }
+
+    async createCardMultiple(deckId, cardContent) {
+        return apiWrapper.request(`/cards/multiple/${deckId}`, {
+            method: 'POST',
+        });
+    }
+
+    async getCardById(cardId) {
+        return apiWrapper.request(`/cards/${cardId}`, {
+            method: 'GET',
+        });
+    }
+
+    async getCardsByDeckId(deckId) {
+        return apiWrapper.request(`/cards/deckid/${deckId}`, {
+            method: 'GET',
+        });
+    }
+
+    async deleteCardById(cardId) {
+        return apiWrapper.request(`/cards/${cardId}`, {
+            method: 'DELETE',
+        });
+    }
+
+    // STUDY APIs
+    async getStudySessionCards(deckId) {
+        return apiWrapper.request(`/study/next`, {
+            method: 'GET',
+        });
+    }
+
+    async reviewCard(answerContent) {
+        return apiWrapper.request(`/study/review`, {
+            method: 'POST',
         });
     }
 }
 
-export const apiService = new ApiService();
+export const flashcardApiService = new FlashCardApiService();

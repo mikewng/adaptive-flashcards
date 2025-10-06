@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect } from 'react';
-import { apiService } from '../utils/flashcardApis';
+import { authApiService } from '../utils/authApis';
 
 const AuthContext = createContext(null);
 
@@ -21,7 +21,7 @@ export function AuthProvider({ children }) {
 
     const loadUser = async () => {
         try {
-            const userData = await apiService.getCurrentUser();
+            const userData = await authApiService.getCurrentUser();
             setUser(userData);
             setError(null);
         } catch (err) {
@@ -36,7 +36,7 @@ export function AuthProvider({ children }) {
     const login = async (email, password) => {
         try {
             setError(null);
-            const response = await apiService.login(email, password);
+            const response = await authApiService.login(email, password);
             localStorage.setItem('access_token', response.access_token);
             await loadUser();
             return { success: true };
@@ -49,7 +49,7 @@ export function AuthProvider({ children }) {
     const register = async (email, password) => {
         try {
             setError(null);
-            await apiService.register(email, password);
+            await authApiService.register(email, password);
             return await login(email, password);
         } catch (err) {
             setError(err.message);
