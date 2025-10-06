@@ -7,6 +7,13 @@ This is a fullstack application that attempts to improve and enrich memorization
 retention and reviews based on each user's deck, as it takes in data from the user (e.g. user's correct/incorrect answer, user's answer time, and historical answers with similar cards) instead of brute forcing through a static schedule. Adaptive flashcards can also provide
 visual dashboards and statistics of your progress with each deck.
 
+# Running (Local)
+FE:
+1. npm i (first time)
+2. npm run dev
+BE:
+1. python -m app.main
+
 # App Features
 ## The Basic Flashcard Features
 Basic functionalities such as creating, updating, deleting, and reviewing decks and cards through a clean user interface.

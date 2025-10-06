@@ -46,14 +46,14 @@ class ApiService {
     }
 
     async register(email, password) {
-        return this.request('/register', {
+        return this.request('/auth/register', {
             method: 'POST',
             body: JSON.stringify({ email, password }),
         });
     }
 
     async getCurrentUser() {
-        return this.request('/me', {
+        return this.request('/auth/me', {
             method: 'GET',
         });
     }
