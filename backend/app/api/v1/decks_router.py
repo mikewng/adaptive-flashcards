@@ -25,5 +25,13 @@ def list_my_decks(db: Session = Depends(get_db),
 def get_deck(deck_id: int, db: Session = Depends(get_db)):
     deck = db.get(Deck, deck_id)
     if not deck: raise HTTPException(404, "Deck not found")
-    
     return deck
+
+@router.delete("/{deck_id}")
+def delete_deck(deck_id: int, db: Session = Depends(get_db)):
+    deck = db.get(Deck, deck_id)
+    if not deck: raise HTTPException(404, "Deck not found")
+
+    db.delete(deck)
+    db.commit()
+    return {"message": "Deck deleted successfully"}
