@@ -68,11 +68,45 @@
                 border-color: #007bff;
             }
 
-            .fc-deck-name {
-                font-size: 1.25rem;
-                font-weight: 600;
-                color: #333;
-                margin: 0 0 1rem 0;
+            .fc-deck-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                margin-bottom: 1rem;
+
+                .fc-deck-name {
+                    font-size: 1.25rem;
+                    font-weight: 600;
+                    color: #333;
+                    margin: 0;
+                    flex: 1;
+                }
+
+                .fc-deck-actions {
+                    display: flex;
+                    gap: 0.5rem;
+                    margin-left: 1rem;
+
+                    .fc-icon-btn {
+                        background: transparent;
+                        border: none;
+                        font-size: 1.1rem;
+                        cursor: pointer;
+                        padding: 0.25rem 0.5rem;
+                        border-radius: 4px;
+                        transition: all 0.2s ease;
+                        opacity: 0.6;
+
+                        &:hover {
+                            opacity: 1;
+                            background-color: rgba(0, 123, 255, 0.1);
+                        }
+
+                        &:active {
+                            transform: scale(0.95);
+                        }
+                    }
+                }
             }
 
             .fc-deck-info {

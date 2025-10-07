@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { flashcardApiService } from '../../utils/flashcardApis';
 import './DeckView.scss';
-import ModalComponent from '@/app/components/ModalComponent';
 import DeckUpdateModal from './components/DeckUpdateModal';
 import DeckComponent from './components/DeckComponent';
 
@@ -41,7 +40,6 @@ const DeckView = () => {
     };
 
     const handleCreateDeck = () => {
-        // Change to open modal
         setOpenCreateModal(true)
     };
 
