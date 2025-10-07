@@ -11,7 +11,6 @@ const DeckView = () => {
     const [decks, setDecks] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [openDeck, setOpenDeck] = useState(null);
     const [openCreateModal, setOpenCreateModal] = useState(false);
 
     const router = useRouter();
@@ -35,8 +34,7 @@ const DeckView = () => {
     }, []);
 
     const handleDeckClick = (deckId) => {
-        // Change to view cards
-        router.push(`/deck/${deckId}/study`);
+        router.push(`/pages/decks/${deckId}`);
     };
 
     const handleCreateDeck = () => {

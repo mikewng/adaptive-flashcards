@@ -30,8 +30,9 @@ class FlashCardApiService {
 
     // CARD APIs
     async createCard(deckId, cardContent) {
-        return apiWrapper.request(`/cards/${deckId}`, {
+        return apiWrapper.request(`/cards`, {
             method: 'POST',
+            body: JSON.stringify({ ...cardContent, deck_id: deckId }),
         });
     }
 
@@ -48,7 +49,7 @@ class FlashCardApiService {
     }
 
     async getCardsByDeckId(deckId) {
-        return apiWrapper.request(`/cards/deckid/${deckId}`, {
+        return apiWrapper.request(`/cards/deck/${deckId}`, {
             method: 'GET',
         });
     }
