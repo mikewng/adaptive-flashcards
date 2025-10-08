@@ -1,0 +1,96 @@
+.fc-card-item {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+    &:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border-color: #007bff;
+    }
+
+    .fc-card-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin-bottom: 1rem;
+
+        .fc-card-section {
+            .fc-card-label {
+                display: block;
+                font-weight: 600;
+                color: #007bff;
+                margin-bottom: 0.5rem;
+                font-size: 0.9rem;
+            }
+
+            .fc-card-text {
+                color: #333;
+                font-size: 1rem;
+                margin: 0;
+                white-space: pre-wrap;
+                word-wrap: break-word;
+            }
+        }
+    }
+
+    .fc-card-actions {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: flex-end;
+        padding-top: 1rem;
+        border-top: 1px solid #e0e0e0;
+
+        .fc-card-action-btn {
+            border: none;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+
+            &.fc-edit-btn {
+                background-color: #f8f9fa;
+                color: #495057;
+
+                &:hover {
+                    background-color: #e9ecef;
+                }
+            }
+
+            &.fc-delete-btn {
+                background-color: #f8f9fa;
+                color: #dc3545;
+
+                &:hover {
+                    background-color: #dc3545;
+                    color: white;
+                }
+            }
+
+            &:active {
+                transform: scale(0.98);
+            }
+        }
+    }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+    .fc-card-item {
+        .fc-card-content {
+            grid-template-columns: 1fr;
+        }
+
+        .fc-card-actions {
+            flex-direction: column;
+
+            .fc-card-action-btn {
+                width: 100%;
+            }
+        }
+    }
+}

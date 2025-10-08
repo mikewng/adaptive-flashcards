@@ -66,7 +66,6 @@ const CardManagement = ({ deckId }) => {
     const handleSaveCard = async (cardData) => {
         try {
             if (editingCard) {
-                // Update existing card (you'll need to add this API method)
                 // await flashcardApiService.updateCard(editingCard.id, cardData);
             } else {
                 // Create new card
@@ -118,12 +117,12 @@ const CardManagement = ({ deckId }) => {
                     <button onClick={handleBackToDeck} className="fc-back-btn">
                         ← Back
                     </button>
-                    <h1>{deck?.name}</h1>
                 </div>
                 <button className="fc-add-card-btn" onClick={handleAddCard}>
                     + Add Card
                 </button>
             </div>
+            <h1>{deck?.name}</h1>
 
             {deck?.description && (
                 <p className="fc-deck-description">{deck.description}</p>

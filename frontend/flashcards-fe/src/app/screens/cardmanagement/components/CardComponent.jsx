@@ -1,3 +1,5 @@
+import "./CardComponent.scss"
+
 const CardComponent = ({ card, onEdit, onDelete }) => {
     return (
         <div className="fc-card-item">
