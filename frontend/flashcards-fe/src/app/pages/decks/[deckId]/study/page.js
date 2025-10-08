@@ -1,11 +1,11 @@
 'use client'
 
 import { useParams } from 'next/navigation';
-import Study from "../../../../screens/study/Study";
+import StudySession from "../../../../screens/study/StudySession";
 
 export default function StudyPage() {
   const params = useParams();
   const deckId = params.deckId;
 
-  return <Study deckId={deckId} />;
+  return <StudySession deckId={deckId} />;
 }

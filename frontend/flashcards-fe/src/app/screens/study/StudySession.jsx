@@ -3,9 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { flashcardApiService } from '../../utils/flashcardApis';
-import './Study.scss';
+import './StudySession.scss';
 
-const Study = ({ deckId, studyType }) => {
+const StudySession = ({ deckId, studyType }) => {
     const [deck, setDeck] = useState(null);
     const [cards, setCards] = useState([]);
     const [currentCardIndex, setCurrentCardIndex] = useState(0);
@@ -94,4 +94,4 @@ const Study = ({ deckId, studyType }) => {
     );
 };
 
-export default Study;
+export default StudySession;
