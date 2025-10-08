@@ -2,15 +2,17 @@
 
 import { useAuth } from '../context/userAuthContext';
 import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
-export default function ProtectedRoute({ children, redirectTo = '/login' }) {
+export default function ProtectedRoute({ children, redirectTo = '/pages/login' }) {
     const { isAuthenticated, loading } = useAuth();
+    const router = useRouter();
 
     useEffect(() => {
         if (!loading && !isAuthenticated) {
-            // window.location.href = redirectTo;
+            router.push(redirectTo);
         }
-    }, [isAuthenticated, loading, redirectTo]);
+    }, [isAuthenticated, loading, redirectTo, router]);
 
     if (loading) {
         return (
