@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.models.models import Card, Deck
-from app.schemas.card import CardCreate, CardRead
+from app.schemas.card import CardCreate, CardRead, CardUpdate
 from typing import List
 
 router = APIRouter()
@@ -25,6 +25,20 @@ def get_cards_by_deck(deck_id: int, db: Session = Depends(get_db)):
 def get_card(card_id: int, db: Session = Depends(get_db)):
     card = db.get(Card, card_id)
     if not card: raise HTTPException(404, "Card not found")
+    return card
+
+@router.put("/{card_id}", response_model=CardRead)
+def update_card(card_id: int, payload: CardUpdate, db: Session = Depends(get_db)):
+    card = db.get(Card, card_id)
+    if not card: raise HTTPException(404, "Card not found")
+
+    if payload.question is not None:
+        card.question = payload.question
+    if payload.answer is not None:
+        card.answer = payload.answer
+
+    db.commit()
+    db.refresh(card)
     return card
 
 @router.delete("/{card_id}")

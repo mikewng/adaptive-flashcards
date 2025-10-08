@@ -90,6 +90,11 @@
         display: flex;
         justify-content: space-between;
         padding: 1rem;
+
+        .fc-subtools-container {
+            display: flex;
+            gap: 1rem;
+        }
     }
 
     .fc-card-list {

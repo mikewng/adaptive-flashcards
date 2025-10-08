@@ -70,7 +70,7 @@ const CardManagement = ({ deckId }) => {
     const handleSaveCard = async (cardData) => {
         try {
             if (editingCard) {
-                // await flashcardApiService.updateCard(editingCard.id, cardData);
+                await flashcardApiService.updateCard(editingCard.id, cardData);
             } else {
                 await flashcardApiService.createCard(deckId, cardData);
             }
@@ -133,7 +133,10 @@ const CardManagement = ({ deckId }) => {
             }
             <div className='fc-details-container'>
                 <div className='fc-count-text'>{`Card Count: ${cards?.length ?? 0}`}</div>
-                <div className='fc-filter-container'>Sort By...</div>
+                <div className='fc-subtools-container'>
+                    <input placeholder='Search cards...'/>
+                    <div className='fc-filter-container'>Sort By...</div>
+                </div>
             </div>
 
             <div className="fc-card-list">

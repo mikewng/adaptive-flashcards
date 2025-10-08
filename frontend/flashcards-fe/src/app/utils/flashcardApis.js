@@ -54,6 +54,13 @@ class FlashCardApiService {
         });
     }
 
+    async updateCard(cardId, cardContent) {
+        return apiWrapper.request(`/cards/${cardId}`, {
+            method: 'PUT',
+            body: JSON.stringify(cardContent),
+        });
+    }
+
     async deleteCardById(cardId) {
         return apiWrapper.request(`/cards/${cardId}`, {
             method: 'DELETE',
