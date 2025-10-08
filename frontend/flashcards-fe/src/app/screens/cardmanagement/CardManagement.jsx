@@ -14,6 +14,7 @@ const CardManagement = ({ deckId }) => {
     const [error, setError] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingCard, setEditingCard] = useState(null);
+    const [searchQuery, setSearchQuery] = useState('');
 
     const router = useRouter();
 
@@ -86,6 +87,15 @@ const CardManagement = ({ deckId }) => {
         router.push('/pages/decks');
     };
 
+    const filteredCards = cards.filter(card => {
+        if (!searchQuery.trim()) return true;
+        const query = searchQuery.toLowerCase();
+        return (
+            card.question?.toLowerCase().includes(query) ||
+            card.answer?.toLowerCase().includes(query)
+        );
+    });
+
     if (loading) {
         return (
             <div className="fc-cardmanagement-wrapper">
@@ -132,16 +142,21 @@ const CardManagement = ({ deckId }) => {
                 )
             }
             <div className='fc-details-container'>
-                <div className='fc-count-text'>{`Card Count: ${cards?.length ?? 0}`}</div>
+                <div className='fc-count-text'>{`Card Count: ${filteredCards?.length ?? 0} / ${cards?.length ?? 0}`}</div>
                 <div className='fc-subtools-container'>
-                    <input placeholder='Search cards...'/>
+                    <input
+                        className='fc-search-filter'
+                        placeholder='Search cards...'
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
                     <div className='fc-filter-container'>Sort By...</div>
                 </div>
             </div>
 
             <div className="fc-card-list">
-                {cards.length > 0 ? (
-                    cards.map((card) => (
+                {filteredCards.length > 0 ? (
+                    filteredCards.map((card) => (
                         <CardComponent
                             key={card.id}
                             card={card}
@@ -151,7 +166,7 @@ const CardManagement = ({ deckId }) => {
                     ))
                 ) : (
                     <div className="fc-no-cards">
-                        <p>No cards yet. Add your first card to get started!</p>
+                        <p>{searchQuery ? 'No cards match your search.' : 'No cards yet. Add your first card to get started!'}</p>
                     </div>
                 )}
             </div>

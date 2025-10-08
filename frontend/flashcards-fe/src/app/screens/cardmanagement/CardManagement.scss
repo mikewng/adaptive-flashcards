@@ -89,11 +89,33 @@
     .fc-details-container {
         display: flex;
         justify-content: space-between;
+        align-items: center;
         padding: 1rem;
 
         .fc-subtools-container {
             display: flex;
             gap: 1rem;
+            align-items: center;
+
+            .fc-search-filter {
+                padding: 0.5rem;
+                border: 1px solid #e0e0e0;
+                border-radius: 8px;
+                font-size: 1rem;
+                font-family: inherit;
+                min-width: 15rem;
+                transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+                &:focus {
+                    outline: none;
+                    border-color: #007bff;
+                    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+                }
+
+                &::placeholder {
+                    color: #999;
+                }
+            }
         }
     }
 
