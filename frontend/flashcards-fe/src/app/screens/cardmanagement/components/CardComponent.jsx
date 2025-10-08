@@ -12,23 +12,26 @@ const CardComponent = ({ card, onEdit, onDelete }) => {
                     <label className="fc-card-label">Answer</label>
                     <p className="fc-card-text">{card.answer}</p>
                 </div>
+                <div className="fc-card-section">
+                    <div className="fc-card-actions">
+                        <button
+                            className="fc-card-action-btn fc-edit-btn"
+                            onClick={() => onEdit(card)}
+                            title="Edit"
+                        >
+                            Edit
+                        </button>
+                        <button
+                            className="fc-card-action-btn fc-delete-btn"
+                            onClick={() => onDelete(card.id)}
+                            title="Delete"
+                        >
+                            Delete
+                        </button>
+                    </div>
+                </div>
             </div>
-            <div className="fc-card-actions">
-                <button
-                    className="fc-card-action-btn fc-edit-btn"
-                    onClick={() => onEdit(card)}
-                    title="Edit"
-                >
-                    Edit
-                </button>
-                <button
-                    className="fc-card-action-btn fc-delete-btn"
-                    onClick={() => onDelete(card.id)}
-                    title="Delete"
-                >
-                    Delete
-                </button>
-            </div>
+
         </div>
     );
 };

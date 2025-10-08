@@ -41,6 +41,10 @@ const CardManagement = ({ deckId }) => {
         }
     };
 
+    const handleStudy = () => {
+        router.push(`/pages/decks/${deckId}/study`);
+    }
+
     const handleAddCard = () => {
         setEditingCard(null);
         setIsModalOpen(true);
@@ -68,7 +72,6 @@ const CardManagement = ({ deckId }) => {
             if (editingCard) {
                 // await flashcardApiService.updateCard(editingCard.id, cardData);
             } else {
-                // Create new card
                 await flashcardApiService.createCard(deckId, cardData);
             }
             await fetchDeckAndCards();
@@ -111,22 +114,27 @@ const CardManagement = ({ deckId }) => {
                     onSave={handleSaveCard}
                 />
             )}
-
             <div className="fc-cardmanagement-header">
-                <div className="fc-header-left">
-                    <button onClick={handleBackToDeck} className="fc-back-btn">
-                        ← Back
+                <h1>{deck?.name}</h1>
+                <div className='fc-tools-container'>
+                    <button className="fc-btn-container study" onClick={handleStudy}>
+                        Study
+                    </button>
+                    <button className="fc-btn-container add" onClick={handleAddCard}>
+                        + Add Card
                     </button>
                 </div>
-                <button className="fc-add-card-btn" onClick={handleAddCard}>
-                    + Add Card
-                </button>
             </div>
-            <h1>{deck?.name}</h1>
 
-            {deck?.description && (
-                <p className="fc-deck-description">{deck.description}</p>
-            )}
+            {
+                deck?.description && (
+                    <p className="fc-deck-description">{deck.description}</p>
+                )
+            }
+            <div className='fc-details-container'>
+                <div className='fc-count-text'>{`Card Count: ${cards?.length ?? 0}`}</div>
+                <div className='fc-filter-container'>Sort By...</div>
+            </div>
 
             <div className="fc-card-list">
                 {cards.length > 0 ? (

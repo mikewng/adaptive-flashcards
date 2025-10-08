@@ -1,0 +1,141 @@
+.fc-study-wrapper {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    min-height: 80vh;
+    display: flex;
+    flex-direction: column;
+
+    .fc-loading,
+    .fc-error {
+        text-align: center;
+        padding: 3rem;
+        font-size: 1.2rem;
+        color: #666;
+    }
+
+    .fc-error {
+        color: #dc3545;
+    }
+
+    .fc-study-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #333;
+            margin: 0;
+        }
+
+        .fc-back-btn {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+
+            &:hover {
+                background-color: #5a6268;
+            }
+
+            &:active {
+                transform: scale(0.98);
+            }
+        }
+
+        .fc-progress {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #007bff;
+            background-color: #f8f9fa;
+            padding: 0.5rem 1rem;
+            min-width: 3rem;
+            max-width: 3rem;
+            border-radius: 8px;
+        }
+    }
+
+    .fc-study-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 2rem;
+    }
+
+    .fc-no-cards {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: #666;
+
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .fc-back-btn {
+            background-color: #007bff;
+
+            &:hover {
+                background-color: #0056b3;
+            }
+        }
+    }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+    .fc-study-wrapper {
+        padding: 1rem;
+
+        .fc-study-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .fc-progress {
+                align-self: flex-end;
+            }
+        }
+
+        .fc-study-content {
+            .fc-flashcard {
+                height: 300px;
+
+                .fc-flashcard-front,
+                .fc-flashcard-back {
+                    padding: 1.5rem;
+
+                    .fc-card-text {
+                        font-size: 1.2rem;
+                    }
+                }
+            }
+        }
+
+        .fc-study-controls {
+            flex-direction: column;
+
+            .fc-control-btn {
+                width: 100%;
+            }
+        }
+    }
+}
