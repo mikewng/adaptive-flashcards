@@ -12,3 +12,5 @@ passlib[bcrypt]==1.7.4
 pypdf==6.1.1
 
 python-multipart==0.0.20
+
+requests==2.32.5
