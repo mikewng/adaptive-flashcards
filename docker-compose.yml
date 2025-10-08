@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:16
+    container_name: flashcards-db
+    environment:
+      POSTGRES_DB: flashcards
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: sqlflashcards123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - flashcards-network
+
+  # FastAPI Backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: flashcards-backend
+    ports:
+      - "8000:8000"
+    environment:
+      APP_NAME: smart_flashcards
+      DATABASE_URL: postgresql+psycopg://postgres:sqlflashcards123@db:5432/flashcards
+      JWT_ALG: HS256
+      JWT_SECRET: ${JWT_SECRET:-please-change-me-in-production}
+      CORS_ORIGINS: '["http://localhost:3000", "http://frontend:3000"]'
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - flashcards-network
+    restart: unless-stopped
+
+  # Next.js Frontend
+  frontend:
+    build:
+      context: ./frontend/flashcards-fe
+      dockerfile: Dockerfile
+    container_name: flashcards-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+    depends_on:
+      - backend
+    networks:
+      - flashcards-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  flashcards-network:
+    driver: bridge
