@@ -2,45 +2,26 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { flashcardApiService } from '../../utils/flashcardApis';
+import { useDeck } from '../../context/deckContext';
 import './CardManagement.scss';
 import CardComponent from './components/CardComponent';
 import CardModal from './components/CardModal';
+import StudyDropdown from './components/StudyDropdown';
 
 const CardManagement = ({ deckId }) => {
-    const [deck, setDeck] = useState(null);
-    const [cards, setCards] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const { deck, cards, loading, error, fetchDeckAndCards, createCard, updateCard, deleteCard } = useDeck();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingCard, setEditingCard] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
+    const [openStudyDropdown, setOpenStudyDropdown] = useState(false)
 
     const router = useRouter();
 
     useEffect(() => {
         if (deckId) {
-            fetchDeckAndCards();
+            fetchDeckAndCards(deckId);
         }
-    }, [deckId]);
-
-    const fetchDeckAndCards = async () => {
-        try {
-            setLoading(true);
-            const [deckData, cardsData] = await Promise.all([
-                flashcardApiService.getDeckById(deckId),
-                flashcardApiService.getCardsByDeckId(deckId)
-            ]);
-            setDeck(deckData);
-            setCards(cardsData);
-            setError(null);
-        } catch (err) {
-            console.error('Error fetching deck and cards:', err);
-            setError('Failed to load deck and cards');
-        } finally {
-            setLoading(false);
-        }
-    };
+    }, [deckId, fetchDeckAndCards]);
 
     const handleStudy = () => {
         router.push(`/pages/decks/${deckId}/study`);
@@ -60,10 +41,8 @@ const CardManagement = ({ deckId }) => {
         if (!confirm('Are you sure you want to delete this card?')) return;
 
         try {
-            await flashcardApiService.deleteCardById(cardId);
-            await fetchDeckAndCards();
+            await deleteCard(deckId, cardId);
         } catch (err) {
-            console.error('Error deleting card:', err);
             alert('Failed to delete card');
         }
     };
@@ -71,14 +50,12 @@ const CardManagement = ({ deckId }) => {
     const handleSaveCard = async (cardData) => {
         try {
             if (editingCard) {
-                await flashcardApiService.updateCard(editingCard.id, cardData);
+                await updateCard(deckId, editingCard.id, cardData);
             } else {
-                await flashcardApiService.createCard(deckId, cardData);
+                await createCard(deckId, cardData);
             }
-            await fetchDeckAndCards();
             setIsModalOpen(false);
         } catch (err) {
-            console.error('Error saving card:', err);
             alert('Failed to save card');
         }
     };
@@ -127,12 +104,18 @@ const CardManagement = ({ deckId }) => {
             <div className="fc-cardmanagement-header">
                 <h1>{deck?.name}</h1>
                 <div className='fc-tools-container'>
-                    <button className="fc-btn-container study" onClick={handleStudy}>
-                        Study
-                    </button>
-                    <button className="fc-btn-container add" onClick={handleAddCard}>
+                    <div className='fc-dropdown-container'>
+                        <div className="fc-btn-container study" onClick={() => { setOpenStudyDropdown(!openStudyDropdown) }}>
+                            Study
+                        </div>
+                        {
+                            openStudyDropdown &&
+                            <StudyDropdown />
+                        }
+                    </div>
+                    <div className="fc-btn-container add" onClick={handleAddCard}>
                         + Add Card
-                    </button>
+                    </div>
                 </div>
             </div>
 

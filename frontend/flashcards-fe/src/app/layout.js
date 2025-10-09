@@ -4,6 +4,7 @@ import "./screens/layout/BaseLayout.scss"
 import { AuthProvider } from './context/userAuthContext'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
+import { DeckProvider } from "./context/deckContext"
 
 export default function RootLayout({ children }) {
   return (
@@ -16,13 +17,15 @@ export default function RootLayout({ children }) {
       </head>
       <body>
         <AuthProvider>
-          <div className="fc-baselayout-wrapper">
-            <Navbar />
-            <main className="fc-screen-container">
-              {children}
-            </main>
-            <Footer />
-          </div>
+          <DeckProvider>
+            <div className="fc-baselayout-wrapper">
+              <Navbar />
+              <main className="fc-screen-container">
+                {children}
+              </main>
+              <Footer />
+            </div>
+          </DeckProvider>
         </AuthProvider>
       </body>
     </html>

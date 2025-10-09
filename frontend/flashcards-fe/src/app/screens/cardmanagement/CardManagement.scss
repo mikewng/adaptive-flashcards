@@ -56,11 +56,16 @@
         .fc-tools-container {
             display: flex;
             gap: 1rem;
+
+            .fc-dropdown-container {
+                position: relative;
+            }
+
             .fc-btn-container {
                 background-color: #007bff;
                 color: white;
                 border: none;
-                padding: 0.75rem 1.5rem;
+                padding: 0.65rem 1.75rem;
                 font-size: 1rem;
                 border-radius: 8px;
                 cursor: pointer;

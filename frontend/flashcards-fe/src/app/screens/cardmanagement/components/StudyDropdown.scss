@@ -1,0 +1,37 @@
+.fc-studydropdown-cpnt-wrapper {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    min-width: 200px;
+    overflow: hidden;
+    z-index: 100;
+
+    .fc-study-option-container {
+        padding: 0.75rem 1rem;
+        color: #333;
+        background-color: white;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        border-bottom: 1px solid #f0f0f0;
+
+        &:last-child {
+            border-bottom: none;
+        }
+
+        &:hover {
+            background-color: #f8f9fa;
+        }
+
+        &:active {
+            background-color: #e9ecef;
+        }
+
+        .fc-option-name {
+            font-size: 1rem;
+            font-weight: 500;
+        }
+    }
+}
