@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import './CardModal.scss';
 
 const CardModal = ({ card, onClose, onSave }) => {
     const [question, setQuestion] = useState('');
