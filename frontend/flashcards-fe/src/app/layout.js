@@ -5,6 +5,7 @@ import { AuthProvider } from './context/userAuthContext'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import { DeckProvider } from "./context/deckContext"
+import { StudySessionProvider } from "./context/studySessionContext"
 
 export default function RootLayout({ children }) {
   return (
@@ -18,13 +19,15 @@ export default function RootLayout({ children }) {
       <body>
         <AuthProvider>
           <DeckProvider>
-            <div className="fc-baselayout-wrapper">
-              <Navbar />
-              <main className="fc-screen-container">
-                {children}
-              </main>
-              <Footer />
-            </div>
+            <StudySessionProvider>
+              <div className="fc-baselayout-wrapper">
+                <Navbar />
+                <main className="fc-screen-container">
+                  {children}
+                </main>
+                <Footer />
+              </div>
+            </StudySessionProvider>
           </DeckProvider>
         </AuthProvider>
       </body>

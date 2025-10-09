@@ -7,9 +7,11 @@ import './CardManagement.scss';
 import CardComponent from './components/CardComponent';
 import CardModal from './components/CardModal';
 import StudyDropdown from './components/StudyDropdown';
+import { useStudy } from '@/app/context/studySessionContext';
 
 const CardManagement = ({ deckId }) => {
     const { deck, cards, loading, error, fetchDeckAndCards, createCard, updateCard, deleteCard } = useDeck();
+    const { setStudyType } = useStudy();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingCard, setEditingCard] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
@@ -22,10 +24,6 @@ const CardManagement = ({ deckId }) => {
             fetchDeckAndCards(deckId);
         }
     }, [deckId, fetchDeckAndCards]);
-
-    const handleStudy = () => {
-        router.push(`/pages/decks/${deckId}/study`);
-    }
 
     const handleAddCard = () => {
         setEditingCard(null);
@@ -63,6 +61,11 @@ const CardManagement = ({ deckId }) => {
     const handleBackToDeck = () => {
         router.push('/pages/decks');
     };
+
+    const handleStudy = (study) => {
+        setStudyType(study)
+        router.push(`/pages/decks/${deckId}/study`);
+    }
 
     const filteredCards = cards.filter(card => {
         if (!searchQuery.trim()) return true;
@@ -110,7 +113,7 @@ const CardManagement = ({ deckId }) => {
                         </div>
                         {
                             openStudyDropdown &&
-                            <StudyDropdown />
+                            <StudyDropdown onStudyOptionClick={handleStudy} />
                         }
                     </div>
                     <div className="fc-btn-container add" onClick={handleAddCard}>
