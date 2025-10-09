@@ -7,12 +7,12 @@ export const studyModesMapping = [
     {
         name: "Writing",
         type: "wt",
-        isActive: true
+        isActive: false
     },
     {
         name: "Multiple Choice",
         type: "mc",
-        isActive: true
+        isActive: false
     },
 
 ]

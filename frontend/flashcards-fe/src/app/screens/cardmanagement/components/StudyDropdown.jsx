@@ -7,7 +7,11 @@ const StudyDropdown = ({ onStudyOptionClick }) => {
             {
                 studyModesMapping.map((mode, i) => {
                     return (
-                        <div className="fc-study-option-container" key={i} onClick={() => { onStudyOptionClick(mode.type) }}>
+                        <div className={"fc-study-option-container" + (mode.isActive ? " active" : " inactive")} key={i} onClick={() => {
+                            if (mode.isActive) {
+                                onStudyOptionClick(mode.type)
+                            }
+                        }}>
                             <div className="fc-option-name">{mode.name}</div>
                         </div>
                     )

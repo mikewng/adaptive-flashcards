@@ -17,11 +17,16 @@
         transition: background-color 0.2s ease;
         border-bottom: 1px solid #f0f0f0;
 
+        &.inactive {
+            cursor: not-allowed;
+            color: #979797;
+        }
+
         &:last-child {
             border-bottom: none;
         }
 
-        &:hover {
+        &.active:hover {
             background-color: #f8f9fa;
         }
 
