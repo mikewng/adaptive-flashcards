@@ -1,0 +1,70 @@
+.fc-flashcard-container {
+    width: 100%;
+    max-width: 55rem;
+    height: 400px;
+}
+
+.fc-flashcard {
+    height: 100%;
+    position: relative;
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+        box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+        border-color: #007bff;
+    }
+}
+
+.fc-card-label {
+    position: absolute;
+    top: 1rem;
+    left: 1.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #007bff;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.fc-card-text {
+    font-size: 1.5rem;
+    color: #333;
+    text-align: center;
+    line-height: 1.6;
+    word-wrap: break-word;
+    padding: 0 1rem;
+}
+
+.fc-flip-hint {
+    position: absolute;
+    bottom: 1rem;
+    font-size: 0.875rem;
+    color: #999;
+    font-style: italic;
+}
+
+// Responsive design
+@media (max-width: 768px) {
+    .fc-flashcard-container {
+        max-width: 100%;
+        height: 300px;
+    }
+
+    .fc-flashcard {
+        padding: 1.5rem;
+    }
+
+    .fc-card-text {
+        font-size: 1.25rem;
+    }
+}

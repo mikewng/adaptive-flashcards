@@ -4,8 +4,13 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { flashcardApiService } from '../../utils/flashcardApis';
 import './StudySession.scss';
+import { useStudy } from '@/app/context/studySessionContext';
+import StudyFlashCard from './components/StudyFlashCard';
 
-const StudySession = ({ deckId, studyType }) => {
+const StudySession = ({ deckId }) => {
+
+    const { studyType } = useStudy();
+
     const [deck, setDeck] = useState(null);
     const [cards, setCards] = useState([]);
     const [currentCardIndex, setCurrentCardIndex] = useState(0);
@@ -40,6 +45,18 @@ const StudySession = ({ deckId, studyType }) => {
 
     const handleBackToCards = () => {
         router.push(`/pages/decks/${deckId}`);
+    };
+
+    const handleNext = () => {
+        if (currentCardIndex < cards.length - 1) {
+            setCurrentCardIndex(currentCardIndex + 1);
+        }
+    };
+
+    const handlePrevious = () => {
+        if (currentCardIndex > 0) {
+            setCurrentCardIndex(currentCardIndex - 1);
+        }
     };
 
     if (loading) {
@@ -79,17 +96,40 @@ const StudySession = ({ deckId, studyType }) => {
     return (
         <div className="fc-study-wrapper">
             <div className="fc-study-header">
-                <button onClick={handleBackToCards} className="fc-back-btn">
-                    Back to Cards
-                </button>
                 <h1>{deck?.name}</h1>
-                <div className="fc-progress">
-                    {currentCardIndex + 1} / {cards.length}
+                <div>
+                    <div className="fc-progress">
+                        {currentCardIndex + 1} / {cards.length}
+                    </div>
                 </div>
             </div>
 
             <div className="fc-study-content">
+                {
+                    studyType === "fc" &&
+                    <StudyFlashCard card={currentCard} />
+                }
             </div>
+
+            {
+                studyType == "fc" &&
+                <div className="fc-study-controls">
+                    <button
+                        onClick={handlePrevious}
+                        disabled={currentCardIndex === 0}
+                        className="fc-control-btn fc-prev-btn"
+                    >
+                        Previous
+                    </button>
+                    <button
+                        onClick={handleNext}
+                        disabled={currentCardIndex === cards.length - 1}
+                        className="fc-control-btn fc-next-btn"
+                    >
+                        Next
+                    </button>
+                </div>
+            }
         </div>
     );
 };
