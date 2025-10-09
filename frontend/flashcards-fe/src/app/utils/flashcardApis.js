@@ -66,49 +66,6 @@ class FlashCardApiService {
             method: 'DELETE',
         });
     }
-
-    // STUDY APIs
-    async startStudySession(deckId, studyMode) {
-        return apiWrapper.request(`/study/sessions`, {
-            method: 'POST',
-            body: JSON.stringify({ deckId, studyMode }),
-        });
-    }
-
-    async getStudySessionCards(deckId, sessionId) {
-        const params = new URLSearchParams();
-        if (deckId) params.append('deckId', deckId);
-        if (sessionId) params.append('sessionId', sessionId);
-
-        return apiWrapper.request(`/study/next?${params.toString()}`, {
-            method: 'GET',
-        });
-    }
-
-    async reviewCard(reviewData) {
-        return apiWrapper.request(`/study/review`, {
-            method: 'POST',
-            body: JSON.stringify(reviewData),
-        });
-    }
-
-    async endStudySession(sessionId) {
-        return apiWrapper.request(`/study/sessions/${sessionId}/end`, {
-            method: 'POST',
-        });
-    }
-
-    async getSessionStats(sessionId) {
-        return apiWrapper.request(`/study/sessions/${sessionId}/stats`, {
-            method: 'GET',
-        });
-    }
-
-    async getStudyHistory(deckId) {
-        return apiWrapper.request(`/study/history/${deckId}`, {
-            method: 'GET',
-        });
-    }
 }
 
 export const flashcardApiService = new FlashCardApiService();

@@ -2,42 +2,45 @@ import { apiWrapper } from './apiWrapper';
 
 class StudyApiService {
 
-    async startSession(deckId, options) {
-        return apiWrapper.request('/study/session/start', {
+    async startStudySession(deckId, studyMode) {
+        return apiWrapper.request(`/study/sessions`, {
             method: 'POST',
-            body: JSON.stringify({ deck_id: deckId, ...options })
+            body: JSON.stringify({ deckId, studyMode }),
         });
     }
 
-    async endSession(sessionId) {
-        return apiWrapper.request('/study/session/end', {
+    async getStudySessionCards(deckId, sessionId) {
+        const params = new URLSearchParams();
+        if (deckId) params.append('deckId', deckId);
+        if (sessionId) params.append('sessionId', sessionId);
+
+        return apiWrapper.request(`/study/next?${params.toString()}`, {
+            method: 'GET',
+        });
+    }
+
+    async reviewCard(reviewData) {
+        return apiWrapper.request(`/study/review`, {
             method: 'POST',
-            body: JSON.stringify({ session_id: sessionId })
+            body: JSON.stringify(reviewData),
         });
     }
 
-    async getSession(sessionId) {
-        return apiWrapper.request(`/study/session/${sessionId}`, {
-            method: 'GET'
-        });
-    }
-
-    async getDueCards(deckId, limit = 20) {
-        return apiWrapper.request(`/study/deck/${deckId}/due?limit=${limit}`, {
-            method: 'GET'
-        });
-    }
-
-    async getNewCards(deckId, limit = 5) {
-        return apiWrapper.request(`/study/deck/${deckId}/new?limit=${limit}`, {
-            method: 'GET'
-        });
-    }
-
-    async submitAnswer(payload) {
-        return apiWrapper.request('/study/submit', {
+    async endStudySession(sessionId) {
+        return apiWrapper.request(`/study/sessions/${sessionId}/end`, {
             method: 'POST',
-            body: JSON.stringify(payload)
+        });
+    }
+
+    async getSessionStats(sessionId) {
+        return apiWrapper.request(`/study/sessions/${sessionId}/stats`, {
+            method: 'GET',
+        });
+    }
+
+    async getStudyHistory(deckId) {
+        return apiWrapper.request(`/study/history/${deckId}`, {
+            method: 'GET',
         });
     }
 

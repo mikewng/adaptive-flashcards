@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useCallback } from 'react';
-import { flashcardApiService } from '../utils/flashcardApis';
+import { studyApiService } from '../utils/studyApis';
 
 const StudySessionContext = createContext(null);
 
@@ -26,7 +26,7 @@ export function StudySessionProvider({ children }) {
             setLoading(true);
             setError(null);
 
-            // const session = await flashcardApiService.startStudySession(deckId, mode);
+            // const session = await studyApiService.startStudySession(deckId, mode);
 
             setStudyType(mode);
             setIsSessionActive(true);
@@ -55,7 +55,7 @@ export function StudySessionProvider({ children }) {
             setError(null);
 
             // TODO: Update to pass deckId and sessionId
-            const nextCard = await flashcardApiService.getStudySessionCards(deckId);
+            const nextCard = await studyApiService.getStudySessionCards(deckId);
             setCurrentCard(nextCard);
 
             return nextCard;
@@ -81,7 +81,7 @@ export function StudySessionProvider({ children }) {
                 studyType
             };
 
-            await flashcardApiService.reviewCard(reviewData);
+            await studyApiService.reviewCard(reviewData);
 
             setSessionStats(prev => ({
                 ...prev,
@@ -105,7 +105,7 @@ export function StudySessionProvider({ children }) {
             setLoading(true);
             setError(null);
 
-            // await flashcardApiService.endStudySession(sessionId);
+            // await studyApiService.endStudySession(sessionId);
 
             setSessionStats(prev => ({
                 ...prev,
