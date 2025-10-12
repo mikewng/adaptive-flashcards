@@ -1,40 +1,41 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { studyApiService } from '@/app/utils/studyApis';
+import { useStudy } from '@/app/context/studySessionContext';
 import { flashcardApiService } from '@/app/utils/flashcardApis';
 
 /**
  * BAREBONES TEST STUDY SESSION
- * Purpose: Test the study logic and backend services
+ * Purpose: Test the study logic and backend services using the study session context
  *
  * This is a temporary component for testing and will be replaced
  * with a refined version later.
  */
 export default function TestStudy() {
-    // Session state
-    const [sessionId, setSessionId] = useState(null);
-    const [deckId, setDeckId] = useState('');
+    // Use the study session context
+    const {
+        sessionId,
+        currentCard,
+        userAnswer,
+        setUserAnswer,
+        showFeedback,
+        lastResult,
+        sessionStats,
+        loading,
+        error,
+        progress,
+        hasMoreCards,
+        startSession,
+        submitAnswer,
+        nextCard,
+        endSession,
+        resetSession
+    } = useStudy();
+
+    // Local state for deck selection
+    const [selectedDeckId, setSelectedDeckId] = useState('');
     const [decks, setDecks] = useState([]);
-
-    // Card state
-    const [cards, setCards] = useState([]);
-    const [currentCardIndex, setCurrentCardIndex] = useState(0);
-    const [userAnswer, setUserAnswer] = useState('');
-
-    // Feedback state
-    const [showFeedback, setShowFeedback] = useState(false);
-    const [lastResult, setLastResult] = useState(null);
-
-    // Session stats
-    const [sessionStats, setSessionStats] = useState(null);
-
-    // Timer
-    const [startTime, setStartTime] = useState(null);
-
-    // Loading/Error state
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+    const [deckError, setDeckError] = useState(null);
 
     // Load available decks on mount
     useEffect(() => {
@@ -47,116 +48,46 @@ export default function TestStudy() {
             setDecks(data);
         } catch (err) {
             console.error('Failed to load decks:', err);
-            setError('Failed to load decks');
+            setDeckError('Failed to load decks');
         }
     };
 
-    const startSession = async () => {
-        if (!deckId) {
-            setError('Please select a deck');
+    const handleStartSession = async () => {
+        if (!selectedDeckId) {
+            setDeckError('Please select a deck');
             return;
         }
 
-        setLoading(true);
-        setError(null);
-
         try {
-            // Start session
-            const session = await studyApiService.startStudySession(parseInt(deckId), 'writing');
-            setSessionId(session.id);
-            console.log('Session started:', session);
-
-            // Get cards to study (due cards)
-            const cardsData = await studyApiService.getDueCards(parseInt(deckId), 20);
-            setCards(cardsData);
-            setCurrentCardIndex(0);
-            setStartTime(Date.now());
-
-            console.log(`Loaded ${cardsData.length} cards`);
+            await startSession(parseInt(selectedDeckId), 'writing', 'due', 20);
         } catch (err) {
+            // Error is handled in context
             console.error('Failed to start session:', err);
-            setError(`Failed to start session: ${err.message}`);
-        } finally {
-            setLoading(false);
         }
     };
 
-    const submitAnswer = async () => {
-        if (!userAnswer.trim()) {
-            setError('Please enter an answer');
-            return;
-        }
-
-        setLoading(true);
-        setError(null);
-
-        const currentCard = cards[currentCardIndex];
-        const timeTaken = Date.now() - startTime;
-
+    const handleSubmitAnswer = async () => {
         try {
-            const result = await studyApiService.submitAnswer({
-                session_id: sessionId,
-                card_id: currentCard.id,
-                user_input: userAnswer,
-                time_taken_ms: timeTaken,
-                typed_chars: userAnswer.length,
-                backspace_count: 0, // Would need to track this in a real implementation
-                typing_speed_cpm: Math.round((userAnswer.length / timeTaken) * 60000)
-            });
-
-            console.log('Answer result:', result);
-            setLastResult(result);
-            setShowFeedback(true);
+            await submitAnswer();
         } catch (err) {
+            // Error is handled in context
             console.error('Failed to submit answer:', err);
-            setError(`Failed to submit answer: ${err.message}`);
-        } finally {
-            setLoading(false);
         }
     };
 
-    const nextCard = () => {
-        setShowFeedback(false);
-        setUserAnswer('');
-        setLastResult(null);
-        setStartTime(Date.now());
-
-        if (currentCardIndex < cards.length - 1) {
-            setCurrentCardIndex(currentCardIndex + 1);
-        } else {
-            // End of cards
-            endSession();
-        }
-    };
-
-    const endSession = async () => {
-        if (!sessionId) return;
-
-        setLoading(true);
+    const handleEndSession = async () => {
         try {
-            const stats = await studyApiService.endStudySession(sessionId);
-            console.log('Session ended:', stats);
-            setSessionStats(stats);
-            setSessionId(null);
-            setCards([]);
+            await endSession();
         } catch (err) {
+            // Error is handled in context
             console.error('Failed to end session:', err);
-            setError(`Failed to end session: ${err.message}`);
-        } finally {
-            setLoading(false);
         }
     };
 
-    const resetTest = () => {
-        setSessionId(null);
-        setDeckId('');
-        setCards([]);
-        setCurrentCardIndex(0);
-        setUserAnswer('');
-        setShowFeedback(false);
-        setLastResult(null);
-        setSessionStats(null);
-        setError(null);
+    const handleResetTest = () => {
+        resetSession();
+        setSelectedDeckId('');
+        setDeckError(null);
     };
 
     // Render session stats summary
@@ -190,7 +121,7 @@ export default function TestStudy() {
                         <span>Total Time:</span>
                         <strong>{(sessionStats.total_time_spent / 1000).toFixed(1)}s</strong>
                     </div>
-                    <button onClick={resetTest} style={styles.button}>
+                    <button onClick={handleResetTest} style={styles.button}>
                         Start New Session
                     </button>
                 </div>
@@ -209,8 +140,8 @@ export default function TestStudy() {
                     <label style={styles.label}>
                         Select a Deck:
                         <select
-                            value={deckId}
-                            onChange={(e) => setDeckId(e.target.value)}
+                            value={selectedDeckId}
+                            onChange={(e) => setSelectedDeckId(e.target.value)}
                             style={styles.select}
                         >
                             <option value="">-- Choose a deck --</option>
@@ -222,11 +153,11 @@ export default function TestStudy() {
                         </select>
                     </label>
 
-                    {error && <div style={styles.error}>{error}</div>}
+                    {(error || deckError) && <div style={styles.error}>{error || deckError}</div>}
 
                     <button
-                        onClick={startSession}
-                        disabled={loading || !deckId}
+                        onClick={handleStartSession}
+                        disabled={loading || !selectedDeckId}
                         style={styles.button}
                     >
                         {loading ? 'Starting...' : 'Start Study Session'}
@@ -237,14 +168,12 @@ export default function TestStudy() {
     }
 
     // Render study interface
-    const currentCard = cards[currentCardIndex];
-
     if (!currentCard) {
         return (
             <div style={styles.container}>
                 <h1 style={styles.title}>No Cards Available</h1>
                 <p>No cards are due for review in this deck.</p>
-                <button onClick={endSession} style={styles.button}>
+                <button onClick={handleEndSession} style={styles.button}>
                     End Session
                 </button>
             </div>
@@ -256,7 +185,7 @@ export default function TestStudy() {
             <div style={styles.header}>
                 <h1 style={styles.title}>Study Session</h1>
                 <p style={styles.progress}>
-                    Card {currentCardIndex + 1} of {cards.length}
+                    Card {progress.current} of {progress.total}
                 </p>
             </div>
 
@@ -274,7 +203,7 @@ export default function TestStudy() {
                                 type="text"
                                 value={userAnswer}
                                 onChange={(e) => setUserAnswer(e.target.value)}
-                                onKeyDown={(e) => e.key === 'Enter' && submitAnswer()}
+                                onKeyDown={(e) => e.key === 'Enter' && handleSubmitAnswer()}
                                 placeholder="Type your answer..."
                                 style={styles.input}
                                 autoFocus
@@ -284,7 +213,7 @@ export default function TestStudy() {
                         {error && <div style={styles.error}>{error}</div>}
 
                         <button
-                            onClick={submitAnswer}
+                            onClick={handleSubmitAnswer}
                             disabled={loading}
                             style={styles.button}
                         >
@@ -296,7 +225,7 @@ export default function TestStudy() {
                         <h2 style={{
                             color: lastResult.correct ? 'green' : 'orange'
                         }}>
-                            {lastResult.correct ? ' Correct!' : '~ Close!'}
+                            {lastResult.correct ? ' Correct!' : '~ Close!'}
                         </h2>
 
                         <div style={styles.resultDetail}>
@@ -319,14 +248,14 @@ export default function TestStudy() {
                         </div>
 
                         <button onClick={nextCard} style={styles.button}>
-                            {currentCardIndex < cards.length - 1 ? 'Next Card' : 'Finish Session'}
+                            {hasMoreCards ? 'Next Card' : 'Finish Session'}
                         </button>
                     </div>
                 )}
             </div>
 
             <button
-                onClick={endSession}
+                onClick={handleEndSession}
                 style={{ ...styles.button, ...styles.endButton }}
             >
                 End Session Early

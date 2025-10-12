@@ -1,7 +1,7 @@
 'use client'
 
 import { useParams } from 'next/navigation';
-import StudySession from "../../../../screens/study/StudySession";
+import StudySession from "../../../../screens/study/basestudy/StudySession";
 import ProtectedRoute from "../../../../components/ProtectedRoute";
 
 export default function StudyPage() {

@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { flashcardApiService } from '../../utils/flashcardApis';
+import { flashcardApiService } from '../../../utils/flashcardApis';
 import './StudySession.scss';
 import { useStudy } from '@/app/context/studySessionContext';
-import StudyFlashCard from './components/StudyFlashCard';
+import StudyFlashCard from '../components/StudyFlashCard';
 
 const StudySession = ({ deckId }) => {
 
