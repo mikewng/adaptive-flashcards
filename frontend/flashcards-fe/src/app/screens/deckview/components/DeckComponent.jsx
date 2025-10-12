@@ -1,4 +1,4 @@
-const DeckComponent = ({ deck, onDeckClick, onEdit, onDelete }) => {
+const DeckComponent = ({ deck, onDeckClick, onDelete }) => {
     const handleIconClick = (e, callback) => {
         e.stopPropagation();
         callback?.(deck.id);
@@ -17,13 +17,6 @@ const DeckComponent = ({ deck, onDeckClick, onEdit, onDelete }) => {
             <div className="fc-deck-header">
                 <h3 className="fc-deck-name">{deck.name}</h3>
                 <div className="fc-deck-actions">
-                    <button
-                        className="fc-icon-btn"
-                        onClick={(e) => handleIconClick(e, onEdit)}
-                        title="Edit"
-                    >
-                        Edit
-                    </button>
                     <button
                         className="fc-icon-btn"
                         onClick={(e) => handleIconClick(e, onDelete)}
