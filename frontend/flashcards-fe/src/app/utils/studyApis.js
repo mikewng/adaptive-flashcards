@@ -2,12 +2,100 @@ import { apiWrapper } from './apiWrapper';
 
 class StudyApiService {
 
-    async startStudySession(deckId, studyMode) {
-        return apiWrapper.request(`/study/sessions`, {
+    // ========================================================================
+    // NEW SESSION ENDPOINTS (matching backend implementation)
+    // ========================================================================
+
+    /**
+     * Start a new study session
+     * @param {number} deckId - The deck to study
+     * @param {string} sessionType - Type of session (e.g., "writing", "multiple_choice")
+     * @returns {Promise} Session object with id
+     */
+    async startStudySession(deckId, sessionType = "writing") {
+        return apiWrapper.request(`/study/session/start`, {
             method: 'POST',
-            body: JSON.stringify({ deckId, studyMode }),
+            body: JSON.stringify({
+                deck_id: deckId,
+                session_type: sessionType
+            }),
         });
     }
+
+    /**
+     * End a study session and get analytics
+     * @param {number} sessionId - The session to end
+     * @returns {Promise} Session analytics
+     */
+    async endStudySession(sessionId) {
+        return apiWrapper.request(`/study/session/end`, {
+            method: 'POST',
+            body: JSON.stringify({ session_id: sessionId }),
+        });
+    }
+
+    /**
+     * Get details of a specific session
+     * @param {number} sessionId - The session ID
+     * @returns {Promise} Session details
+     */
+    async getStudySession(sessionId) {
+        return apiWrapper.request(`/study/session/${sessionId}`, {
+            method: 'GET',
+        });
+    }
+
+    /**
+     * Get cards that are due for review
+     * @param {number} deckId - The deck ID
+     * @param {number} limit - Max number of cards to return
+     * @returns {Promise} Array of cards with questions (answers hidden)
+     */
+    async getDueCards(deckId, limit = 20) {
+        return apiWrapper.request(`/study/deck/${deckId}/due?limit=${limit}`, {
+            method: 'GET',
+        });
+    }
+
+    /**
+     * Get new cards (never studied before)
+     * @param {number} deckId - The deck ID
+     * @param {number} limit - Max number of cards to return
+     * @returns {Promise} Array of new cards
+     */
+    async getNewCards(deckId, limit = 20) {
+        return apiWrapper.request(`/study/deck/${deckId}/new?limit=${limit}`, {
+            method: 'GET',
+        });
+    }
+
+    /**
+     * Get all cards (for practice mode)
+     * @param {number} deckId - The deck ID
+     * @param {number} limit - Max number of cards to return
+     * @returns {Promise} Array of all cards
+     */
+    async getAllCards(deckId, limit = 50) {
+        return apiWrapper.request(`/study/deck/${deckId}/all?limit=${limit}`, {
+            method: 'GET',
+        });
+    }
+
+    /**
+     * Submit an answer with detailed metrics
+     * @param {object} answerData - Answer submission data
+     * @returns {Promise} Feedback with correct answer and similarity score
+     */
+    async submitAnswer(answerData) {
+        return apiWrapper.request(`/study/submit`, {
+            method: 'POST',
+            body: JSON.stringify(answerData),
+        });
+    }
+
+    // ========================================================================
+    // LEGACY ENDPOINTS (for backwards compatibility)
+    // ========================================================================
 
     async getStudySessionCards(deckId, sessionId) {
         const params = new URLSearchParams();
@@ -23,12 +111,6 @@ class StudyApiService {
         return apiWrapper.request(`/study/review`, {
             method: 'POST',
             body: JSON.stringify(reviewData),
-        });
-    }
-
-    async endStudySession(sessionId) {
-        return apiWrapper.request(`/study/sessions/${sessionId}/end`, {
-            method: 'POST',
         });
     }
 
