@@ -170,7 +170,6 @@ const WritingStudy = ({ deckId }) => {
     return (
         <div className="writing-study-wrapper">
             <div className="study-header">
-                <h1>Writing Practice</h1>
                 <div className="study-mode-badge">Writing Mode</div>
                 <div className="progress-info">
                     <span className="progress-text">
