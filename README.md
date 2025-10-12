@@ -11,6 +11,20 @@ This is a fullstack application that attempts to improve and enrich memorization
 retention and reviews based on each user's deck, as it takes in data from the user (e.g. user's correct/incorrect answer, user's answer time, and historical answers with similar cards) instead of brute forcing through a static schedule. Adaptive flashcards can also provide
 visual dashboards and statistics of your progress with each deck.
 
+### Decks Management Page
+<img width="1537" height="908" alt="image" src="https://github.com/user-attachments/assets/0946c4b9-f74b-4b1a-8c73-ae27bceb8749" />
+
+### Cards Management Page
+<img width="1307" height="905" alt="image" src="https://github.com/user-attachments/assets/5cb45a80-d718-40cd-8463-cd57331829a9" />
+
+### Study Feature - Flashcards
+<img width="1277" height="837" alt="image" src="https://github.com/user-attachments/assets/be9a9675-a9cc-4d07-96dd-b1c082b71ca3" />
+
+
+### Study Feature - Writing
+<img width="1265" height="837" alt="image" src="https://github.com/user-attachments/assets/87e27399-8f80-467f-8f10-785b6e1bd7f9" />
+
+
 # App Features
 ## The Basic Flashcard Features
 Basic functionalities such as creating, updating, deleting, and reviewing decks and cards through a clean user interface
@@ -104,4 +118,6 @@ General ability to search for publicly published decks
 ---
 
 **Note**: This application is under active development. Features and documentation are subject to change.
+
+
 
