@@ -11,7 +11,24 @@ const CardComponent = ({ card, onEdit, onDelete }) => {
                     <p className="fc-card-text">{card.answer}</p>
                 </div>
                 <div className="fc-card-section">
+                    {
+                        card.due_date ?
+                            <p className="fc-card-due-date">
+                                {"Due: " + new Date(card.due_date).toLocaleDateString()}
+                            </p>
+                            :
+                            <p>None</p>
+                    }
+
+                </div>
+                <div className="fc-card-section">
                     <div className="fc-card-actions">
+                        <button
+                            className="fc-card-action-btn fc-edit-btn"
+                            title="Stats"
+                        >
+                            Stats
+                        </button>
                         <button
                             className="fc-card-action-btn fc-edit-btn"
                             onClick={() => onEdit(card)}

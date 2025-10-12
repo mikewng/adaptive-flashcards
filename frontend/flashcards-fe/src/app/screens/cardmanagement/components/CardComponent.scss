@@ -2,7 +2,7 @@
     background: white;
     border: 1px solid #e0e0e0;
     border-radius: 12px;
-    padding: 1.5rem;
+    padding: 1rem;
     transition: all 0.2s ease;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 
@@ -13,7 +13,7 @@
 
     .fc-card-content {
         display: grid;
-        grid-template-columns: 0.75fr 1fr 0.15fr;
+        grid-template-columns: 0.75fr 0.65fr 0.3fr 0.15fr;
         gap: 1.5rem;
 
         .fc-card-section {

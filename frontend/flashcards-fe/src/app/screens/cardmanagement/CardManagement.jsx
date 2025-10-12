@@ -129,6 +129,9 @@ const CardManagement = ({ deckId }) => {
                     <div className="fc-btn-container add" onClick={handleAddCard}>
                         + Add Card
                     </div>
+                    <div className="fc-btn-container db">
+                        Dashboards
+                    </div>
                 </div>
             </div>
 
