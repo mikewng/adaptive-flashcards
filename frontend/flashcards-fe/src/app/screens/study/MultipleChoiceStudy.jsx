@@ -18,7 +18,6 @@ const MultipleChoiceStudy = ({ deckId }) => {
     return (
         <div className="mc-study-wrapper">
             <div className="coming-soon">
-                <div className="icon">☑️</div>
                 <h1>Multiple Choice Mode</h1>
                 <p className="subtitle">Coming Soon!</p>
                 <div className="description">
