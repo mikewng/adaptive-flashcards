@@ -7,11 +7,9 @@ import './CardManagement.scss';
 import CardComponent from './components/CardComponent';
 import CardModal from './components/CardModal';
 import StudyDropdown from './components/StudyDropdown';
-import { useStudy } from '@/app/context/studySessionContext';
 
 const CardManagement = ({ deckId }) => {
     const { deck, cards, loading, error, fetchDeckAndCards, createCard, updateCard, deleteCard } = useDeck();
-    const { setStudyType } = useStudy();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingCard, setEditingCard] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
@@ -62,9 +60,21 @@ const CardManagement = ({ deckId }) => {
         router.push('/pages/decks');
     };
 
-    const handleStudy = (study) => {
-        setStudyType(study)
-        router.push(`/pages/decks/${deckId}/study`);
+    const handleStudy = (studyMode) => {
+        // Route to different study pages based on mode
+        switch(studyMode) {
+            case 'fc': // Flashcards
+                router.push(`/pages/decks/${deckId}/study/flashcards`);
+                break;
+            case 'wt': // Writing
+                router.push(`/pages/decks/${deckId}/study/writing`);
+                break;
+            case 'mc': // Multiple Choice
+                router.push(`/pages/decks/${deckId}/study/mc`);
+                break;
+            default:
+                console.error('Unknown study mode:', studyMode);
+        }
     }
 
     const filteredCards = cards.filter(card => {

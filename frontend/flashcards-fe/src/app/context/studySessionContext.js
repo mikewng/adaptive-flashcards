@@ -52,16 +52,7 @@ export function StudySessionProvider({ children }) {
         setError(null);
 
         try {
-            // Start session on backend
-            const session = await studyApiService.startStudySession(parseInt(targetDeckId), mode);
-            setSessionId(session.id);
-            setDeckId(parseInt(targetDeckId));
-            setSessionType(mode);
-            setIsSessionActive(true);
-
-            console.log('Session started:', session);
-
-            // Load cards based on source
+            // First, check if there are cards available BEFORE creating a session
             let cardsData;
             if (cardSource === 'due') {
                 cardsData = await studyApiService.getDueCards(parseInt(targetDeckId), cardLimit);
@@ -71,12 +62,29 @@ export function StudySessionProvider({ children }) {
                 cardsData = await studyApiService.getAllCards(parseInt(targetDeckId), cardLimit);
             }
 
+            console.log(`Found ${cardsData.length} cards for ${cardSource} mode`);
+
+            // If no cards available, don't create a session
+            if (!cardsData || cardsData.length === 0) {
+                setCards([]);
+                setDeckId(parseInt(targetDeckId));
+                setError(null); // Clear error - this is not an error state
+                return { session: null, cards: [] };
+            }
+
+            // Only create backend session if we have cards to study
+            const session = await studyApiService.startStudySession(parseInt(targetDeckId), mode);
+            setSessionId(session.id);
+            setDeckId(parseInt(targetDeckId));
+            setSessionType(mode);
+            setIsSessionActive(true);
+
+            console.log('Session started:', session);
+
             setCards(cardsData);
             setCurrentCardIndex(0);
             setStartTime(Date.now());
             cardStartTimeRef.current = Date.now();
-
-            console.log(`Loaded ${cardsData.length} cards`);
 
             return { session, cards: cardsData };
         } catch (err) {

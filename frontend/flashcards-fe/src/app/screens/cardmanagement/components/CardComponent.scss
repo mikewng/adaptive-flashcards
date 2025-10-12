@@ -13,7 +13,7 @@
 
     .fc-card-content {
         display: grid;
-        grid-template-columns: 1fr 1fr 0.15fr;
+        grid-template-columns: 0.75fr 1fr 0.15fr;
         gap: 1.5rem;
 
         .fc-card-section {
@@ -30,6 +30,7 @@
             }
 
             .fc-card-text {
+                display: flex;
                 color: #333;
                 font-size: 1rem;
                 margin: 0;

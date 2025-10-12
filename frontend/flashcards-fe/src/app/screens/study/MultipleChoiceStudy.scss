@@ -1,0 +1,104 @@
+.mc-study-wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 60px 20px;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .coming-soon {
+        text-align: center;
+        background: white;
+        padding: 60px 40px;
+        border-radius: 16px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+
+        .icon {
+            font-size: 5rem;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+
+        .description {
+            text-align: left;
+            max-width: 500px;
+            margin: 0 auto 40px;
+            color: #666;
+            line-height: 1.8;
+
+            p {
+                margin-bottom: 15px;
+                font-size: 1.05rem;
+            }
+
+            ul {
+                list-style: none;
+                padding-left: 0;
+
+                li {
+                    padding: 8px 0;
+                    padding-left: 30px;
+                    position: relative;
+
+                    &:before {
+                        content: "✓";
+                        position: absolute;
+                        left: 0;
+                        color: #4CAF50;
+                        font-weight: bold;
+                        font-size: 1.2rem;
+                    }
+                }
+            }
+        }
+
+        .back-btn {
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+
+            &:hover {
+                background-color: #5a6268;
+                transform: translateY(-2px);
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            }
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .mc-study-wrapper {
+        padding: 30px 15px;
+
+        .coming-soon {
+            padding: 40px 25px;
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .subtitle {
+                font-size: 1.3rem;
+            }
+        }
+    }
+}
