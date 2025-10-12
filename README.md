@@ -99,8 +99,9 @@ General ability to search for publicly published decks
 
 - SuperMemo-2 algorithm by Piotr Woźniak
 - Inspired by Anki and other spaced repetition systems
-- Built with modern web technologies and best practices
+- Inspired by Quizlet for writing and multiple choice study options
 
 ---
 
 **Note**: This application is under active development. Features and documentation are subject to change.
+
