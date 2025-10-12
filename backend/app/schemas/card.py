@@ -20,6 +20,7 @@ class CardRead(BaseModel):
     reps: int
     lapses: int
     due_date: datetime | date
+    accuracy_rate: float
     suspended: bool
     created_at: datetime
     class Config: from_attributes = True
