@@ -4,6 +4,10 @@ const DeckComponent = ({ deck, onDeckClick, onEdit, onDelete }) => {
         callback?.(deck.id);
     };
 
+    // Format card count with due indicator
+    const totalCards = deck.card_count ?? deck.cardCount ?? 0;
+    const dueCards = deck.due_count ?? 0;
+
     return (
         <div
             key={deck.id}
@@ -30,9 +34,19 @@ const DeckComponent = ({ deck, onDeckClick, onEdit, onDelete }) => {
                 </div>
             </div>
             <div className="fc-deck-info">
-                <span className="fc-desc">{deck?.description}</span>
-                <span className="fc-card-count">{`Card Count: ${deck.cardCount ?? 0}`}</span>
-                <span className="fc-last-studied">Last studied: {deck?.lastStudied ?? "N/A"}</span>
+                {deck?.description && (
+                    <span className="fc-desc">{deck.description}</span>
+                )}
+                <div className="fc-stats-row">
+                    <span className="fc-card-count">
+                        {totalCards} {totalCards === 1 ? 'card' : 'cards'}
+                    </span>
+                    {dueCards > 0 && (
+                        <span className="fc-due-count">
+                            {dueCards} due
+                        </span>
+                    )}
+                </div>
             </div>
         </div>
     )
