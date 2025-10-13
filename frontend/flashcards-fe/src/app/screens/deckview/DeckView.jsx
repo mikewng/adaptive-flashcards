@@ -44,6 +44,11 @@ const DeckView = () => {
         setOpenCreateModal(true)
     };
 
+    const handleDeckCreated = (newDeck) => {
+        setDecks([...decks, newDeck]);
+        router.push(`/pages/decks/${newDeck.id}`);
+    };
+
     const handleDeleteDeck = (deckId) => {
         setDeckToDelete(deckId);
         setDeleteModalOpen(true);
@@ -88,7 +93,10 @@ const DeckView = () => {
         <div className="fc-deckview-screen-wrapper">
             {
                 openCreateModal &&
-                <DeckUpdateModal onClose={() => setOpenCreateModal(false)} />
+                <DeckUpdateModal
+                    onClose={() => setOpenCreateModal(false)}
+                    onDeckCreated={handleDeckCreated}
+                />
             }
             {
                 deleteModalOpen &&
