@@ -28,8 +28,8 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     container_name: flashcards-backend
-    expose:
-      - "8000"
+    ports:
+      - "8000:8000"
     environment:
       APP_NAME: smart_flashcards
       DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg://postgres:sqlflashcards123@db:5432/flashcards}
@@ -54,8 +54,8 @@ services:
       context: ./frontend/flashcards-fe
       dockerfile: Dockerfile
     container_name: flashcards-frontend
-    expose:
-      - "3000"
+    ports:
+      - "3000:3000"
     environment:
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://${DOMAIN_NAME}/api}
       NODE_ENV: production
