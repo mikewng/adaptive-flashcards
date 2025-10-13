@@ -58,8 +58,8 @@ jobs:
           JWT_SECRET=${{ secrets.JWT_SECRET }}
           DATABASE_URL=postgresql+psycopg://postgres:sqlflashcards123@db:5432/flashcards
           POSTGRES_PASSWORD=sqlflashcards123
-          NEXT_PUBLIC_API_URL=http://${{ secrets.EC2_HOST }}:8000
-          CORS_ORIGINS='["http://localhost:3000"]'
+          NEXT_PUBLIC_API_URL=http://${{ secrets.EC2_HOST }}:8000/api
+          CORS_ORIGINS='["http://localhost:3000", "http://${{ secrets.EC2_HOST }}:3000"]'
           ENVEOF
           else
             # Domain configured, use HTTPS
