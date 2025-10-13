@@ -1,0 +1,120 @@
+name: Deploy to AWS EC2
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Deploy to EC2
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USER: ${{ secrets.EC2_USER }}
+          EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          DOMAIN_NAME: ${{ secrets.DOMAIN_NAME }}
+          SSL_EMAIL: ${{ secrets.SSL_EMAIL }}
+        run: |
+          # Save SSH key
+          echo "$EC2_SSH_KEY" > ec2_key.pem
+          chmod 600 ec2_key.pem
+
+          # Create deployment script
+          cat > deploy.sh << 'EOF'
+          #!/bin/bash
+          set -e
+
+          echo "Starting deployment..."
+
+          # Navigate to project directory
+          cd /home/${{ secrets.EC2_USER }}/fc-production-app || exit 1
+
+          # Pull latest changes
+          echo "Pulling latest code..."
+          git fetch origin
+          git reset --hard origin/main
+
+          # Create or update .env file
+          echo "Creating .env file..."
+          DOMAIN=${{ secrets.DOMAIN_NAME }}
+          if [ -z "$DOMAIN" ]; then
+            # No domain configured, use EC2 IP
+            cat > .env << ENVEOF
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
+          DATABASE_URL=postgresql+psycopg://postgres:sqlflashcards123@db:5432/flashcards
+          POSTGRES_PASSWORD=sqlflashcards123
+          NEXT_PUBLIC_API_URL=http://${{ secrets.EC2_HOST }}:8000
+          CORS_ORIGINS='["http://localhost:3000"]'
+          ENVEOF
+          else
+            # Domain configured, use HTTPS
+            cat > .env << ENVEOF
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
+          DATABASE_URL=postgresql+psycopg://postgres:sqlflashcards123@db:5432/flashcards
+          POSTGRES_PASSWORD=sqlflashcards123
+          DOMAIN_NAME=${{ secrets.DOMAIN_NAME }}
+          SSL_EMAIL=${{ secrets.SSL_EMAIL }}
+          NEXT_PUBLIC_API_URL=https://${{ secrets.DOMAIN_NAME }}/api
+          CORS_ORIGINS='["https://${{ secrets.DOMAIN_NAME }}"]'
+          ENVEOF
+          fi
+
+          # Stop existing containers
+          echo "Stopping existing containers..."
+          docker compose -f docker-compose.prod.yml down || true
+
+          # Remove old images to save space
+          echo "Cleaning up old images..."
+          docker system prune -af --volumes || true
+
+          # Build and start containers
+          echo "Building and starting containers..."
+          docker compose -f docker-compose.prod.yml up -d --build
+
+          # Wait for services to be healthy
+          echo "Waiting for services to be ready..."
+          sleep 10
+
+          # Check container status
+          echo "Container status:"
+          docker compose -f docker-compose.prod.yml ps
+
+          echo "Deployment completed successfully!"
+          EOF
+
+          # Copy deployment script to EC2
+          scp -i ec2_key.pem -o StrictHostKeyChecking=no deploy.sh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/tmp/deploy.sh
+
+          # Execute deployment on EC2
+          ssh -i ec2_key.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} 'bash /tmp/deploy.sh'
+
+          # Cleanup
+          rm -f ec2_key.pem deploy.sh
+
+      - name: Deployment Summary
+        if: success()
+        run: |
+          echo "Deployment successful!"
+          echo "Frontend: http://${{ secrets.EC2_HOST }}:3000"
+          echo "Backend API: http://${{ secrets.EC2_HOST }}:8000"
+          echo "API Docs: http://${{ secrets.EC2_HOST }}:8000/docs"
+
+      - name: Notify on Failure
+        if: failure()
+        run: |
+          echo "Deployment failed! Check the logs above for details."
