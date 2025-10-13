@@ -72,7 +72,7 @@ services:
         max-size: "10m"
         max-file: "3"
 
-  # Nginx Reverse Proxy with SSL
+  # Nginx Reverse Proxy (HTTP only, Cloudflare handles HTTPS)
   nginx:
     build:
       context: ./nginx
@@ -80,12 +80,8 @@ services:
     container_name: flashcards-nginx
     ports:
       - "80:80"
-      - "443:443"
     environment:
       DOMAIN_NAME: ${DOMAIN_NAME}
-    volumes:
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
     depends_on:
       - frontend
       - backend
@@ -97,17 +93,6 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
-
-  # Certbot for SSL certificates
-  certbot:
-    image: certbot/certbot
-    container_name: flashcards-certbot
-    volumes:
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
-    networks:
-      - flashcards-network
 
 volumes:
   postgres_data:

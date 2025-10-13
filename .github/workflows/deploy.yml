@@ -28,7 +28,6 @@ jobs:
           EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           DOMAIN_NAME: ${{ secrets.DOMAIN_NAME }}
-          SSL_EMAIL: ${{ secrets.SSL_EMAIL }}
         run: |
           # Save SSH key
           echo "$EC2_SSH_KEY" > ec2_key.pem
@@ -62,13 +61,12 @@ jobs:
           CORS_ORIGINS='["http://localhost:3000", "http://${{ secrets.EC2_HOST }}:3000"]'
           ENVEOF
           else
-            # Domain configured, use HTTPS
+            # Domain configured, use HTTPS (Cloudflare handles SSL)
             cat > .env << ENVEOF
           JWT_SECRET=${{ secrets.JWT_SECRET }}
           DATABASE_URL=postgresql+psycopg://postgres:sqlflashcards123@db:5432/flashcards
           POSTGRES_PASSWORD=sqlflashcards123
           DOMAIN_NAME=${{ secrets.DOMAIN_NAME }}
-          SSL_EMAIL=${{ secrets.SSL_EMAIL }}
           NEXT_PUBLIC_API_URL=https://${{ secrets.DOMAIN_NAME }}/api
           CORS_ORIGINS='["https://${{ secrets.DOMAIN_NAME }}"]'
           ENVEOF
