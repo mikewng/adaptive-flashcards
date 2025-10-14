@@ -10,11 +10,11 @@ const CardComponent = ({ card, onEdit, onDelete }) => {
                 <div className="fc-card-section">
                     <p className="fc-card-text">{card.answer}</p>
                 </div>
-                <div className="fc-card-section">
+                <div className="fc-card-section split">
                     {
                         card.due_date ?
                             <p className="fc-card-due-date">
-                                {"Due: " + new Date(card.due_date).toLocaleDateString()}
+                                {"Due: " + new Date(card.due_date).toLocaleDateString() + " UTC"}
                             </p>
                             :
                             <p>None</p>

@@ -71,7 +71,7 @@ const DeckUpdateModal = ({ isOpen, onClose, onDeckCreated }) => {
             <form onSubmit={handleSubmit} className='fc-deckmodal-form'>
                 <div className="fc-deckmodal-section-container">
                     <label htmlFor="deckName" className="fc-deckmodal-label">
-                        Deck Name *
+                        Deck Name * <span className="fc-deckmodal-char-count">{deckName.length}/25</span>
                     </label>
                     <input
                         type="text"
@@ -80,13 +80,14 @@ const DeckUpdateModal = ({ isOpen, onClose, onDeckCreated }) => {
                         placeholder="Enter deck name"
                         value={deckName}
                         onChange={(e) => setDeckName(e.target.value)}
+                        maxLength={25}
                         disabled={isLoading}
                     />
                 </div>
 
                 <div className="fc-deckmodal-section-container">
                     <label htmlFor="description" className="fc-deckmodal-label">
-                        Description
+                        Description <span className="fc-deckmodal-char-count">{description.length}/100</span>
                     </label>
                     <textarea
                         id="description"
@@ -94,6 +95,7 @@ const DeckUpdateModal = ({ isOpen, onClose, onDeckCreated }) => {
                         placeholder="Enter deck description (optional)"
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
+                        maxLength={100}
                         disabled={isLoading}
                     />
                 </div>

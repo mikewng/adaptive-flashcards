@@ -80,6 +80,8 @@
                     color: #333;
                     margin: 0;
                     flex: 1;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
                 }
 
                 .fc-deck-actions {
@@ -120,6 +122,8 @@
                     color: #666;
                     line-height: 1.4;
                     margin-bottom: 0.25rem;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
                 }
 
                 .fc-stats-row {
@@ -168,21 +172,23 @@
         padding: 1rem;
 
         .fc-deck-header {
-            flex-direction: column;
+            display: flex;
             align-items: flex-start;
             gap: 1rem;
 
             h1 {
-                font-size: 1.5rem;
+                font-size: 2rem;
             }
 
             .fc-create-deck-btn {
                 width: 100%;
             }
-        }
 
-        .fc-deck-list {
-            grid-template-columns: 1fr;
+            &.title {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
         }
     }
 }

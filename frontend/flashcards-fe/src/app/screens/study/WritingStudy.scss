@@ -151,6 +151,11 @@
                     background-color: #fff3e0;
                     color: #f57c00;
                 }
+
+                &.incorrect {
+                    background-color: #ffebee;
+                    color: #c62828;
+                }
             }
 
             .result-details {
