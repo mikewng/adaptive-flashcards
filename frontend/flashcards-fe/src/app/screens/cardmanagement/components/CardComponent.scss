@@ -20,7 +20,7 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            
+
             .fc-card-label {
                 display: block;
                 font-weight: 600;
@@ -88,9 +88,24 @@
             grid-template-columns: 1fr;
         }
 
-        .fc-card-actions {
-            flex-direction: column;
+        .fc-card-section {
+            .fc-card-text {
+                justify-content: center;
+            }
 
+            .fc-card-due-date {
+                display: flex;
+                justify-content: center;
+                margin-bottom: unset;
+            }
+
+            &.split {
+                border-top: 1px solid rgb(190, 178, 201);
+                height: fit-content;
+            }
+        }
+
+        .fc-card-actions {
             .fc-card-action-btn {
                 width: 100%;
             }

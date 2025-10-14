@@ -116,7 +116,7 @@ const DeckView = () => {
                     </div>
                 </ModalComponent>
             }
-            <div className="fc-deck-header">
+            <div className="fc-deck-header title">
                 <h1>My Decks</h1>
                 <button className="fc-create-deck-btn" onClick={handleCreateDeck}>
                     + Create New Deck

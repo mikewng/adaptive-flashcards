@@ -168,16 +168,22 @@
         padding: 1rem;
 
         .fc-deck-header {
-            flex-direction: column;
+            display: flex;
             align-items: flex-start;
             gap: 1rem;
 
             h1 {
-                font-size: 1.5rem;
+                font-size: 2rem;
             }
 
             .fc-create-deck-btn {
                 width: 100%;
+            }
+
+            &.title {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
             }
         }
 

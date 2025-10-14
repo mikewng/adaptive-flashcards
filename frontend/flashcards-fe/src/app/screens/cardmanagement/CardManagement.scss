@@ -166,5 +166,48 @@
                 width: 100%;
             }
         }
+
+        .fc-tools-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            width: 100%;
+            justify-content: center;
+
+            .fc-dropdown-container {
+                position: relative;
+            }
+
+            .fc-btn-container {
+                background-color: #007bff;
+                color: white;
+                border: none;
+                padding: 0.65rem 1.75rem;
+                font-size: 1rem;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: background-color 0.2s ease;
+
+                display: flex;
+                justify-content: center;
+
+                &:hover {
+                    background-color: #0056b3;
+                }
+
+                &:active {
+                    transform: scale(0.98);
+                }
+            }
+        }
+
+        .fc-details-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            gap: 1rem;
+        }
     }
 }
