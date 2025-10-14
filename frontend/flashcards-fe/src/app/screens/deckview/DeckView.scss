@@ -80,6 +80,8 @@
                     color: #333;
                     margin: 0;
                     flex: 1;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
                 }
 
                 .fc-deck-actions {
@@ -120,6 +122,8 @@
                     color: #666;
                     line-height: 1.4;
                     margin-bottom: 0.25rem;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
                 }
 
                 .fc-stats-row {
