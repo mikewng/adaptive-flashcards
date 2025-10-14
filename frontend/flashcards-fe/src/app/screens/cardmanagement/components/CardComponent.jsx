@@ -14,7 +14,7 @@ const CardComponent = ({ card, onEdit, onDelete }) => {
                     {
                         card.due_date ?
                             <p className="fc-card-due-date">
-                                {"Due: " + new Date(card.due_date).toLocaleDateString()}
+                                {"Due: " + new Date(card.due_date).toLocaleDateString() + " UTC"}
                             </p>
                             :
                             <p>None</p>

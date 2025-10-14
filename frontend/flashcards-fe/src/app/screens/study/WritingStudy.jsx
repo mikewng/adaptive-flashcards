@@ -217,8 +217,16 @@ const WritingStudy = ({ deckId }) => {
                     </div>
                 ) : (
                     <div className="feedback-section">
-                        <div className={`result-header ${lastResult.correct ? 'correct' : 'partial'}`}>
-                            {lastResult.correct ? '✓ Correct!' : '~ Close!'}
+                        <div className={`result-header ${
+                            lastResult.correct ? 'correct' :
+                            (lastResult.similarity_score * 100) > 75 ? 'partial' :
+                            'incorrect'
+                        }`}>
+                            {
+                                lastResult.correct ? "Correct!" :
+                                    (lastResult.similarity_score * 100) > 75 ? "Close!" :
+                                        "Wrong..."
+                            }
                         </div>
 
                         <div className="result-details">
