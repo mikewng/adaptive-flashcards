@@ -8,11 +8,11 @@ services:
     environment:
       POSTGRES_DB: flashcards
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: sqlflashcards123
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-devpassword123}
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
+    # Port removed for security - access db through Docker network only
+    # For local debugging, uncomment: ports: ["5432:5432"]
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
@@ -31,9 +31,9 @@ services:
       - "8000:8000"
     environment:
       APP_NAME: smart_flashcards
-      DATABASE_URL: postgresql+psycopg://postgres:sqlflashcards123@db:5432/flashcards
+      DATABASE_URL: postgresql+psycopg://postgres:${POSTGRES_PASSWORD:-devpassword123}@db:5432/flashcards
       JWT_ALG: HS256
-      JWT_SECRET: ${JWT_SECRET:-please-change-me-in-production}
+      JWT_SECRET: ${JWT_SECRET:-dev-secret-change-in-production}
       CORS_ORIGINS: '["http://localhost:3000", "http://frontend:3000"]'
     depends_on:
       db:
