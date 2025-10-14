@@ -1,10 +1,14 @@
 'use client'
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import "./StudyFlashCard.scss"
 
 const StudyFlashCard = ({ card }) => {
     const [isFlipped, setIsFlipped] = useState(false);
+
+    useEffect(() => {
+        setIsFlipped(false);
+    }, [card]);
 
     const handleFlip = () => {
         setIsFlipped(!isFlipped);
