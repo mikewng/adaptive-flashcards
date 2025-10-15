@@ -6,7 +6,7 @@ from typing import List
 from difflib import SequenceMatcher
 from app.core.database import get_db
 from app.core.dependencies import get_current_user
-from app.models.models import Card, Review, StudySession, CardMetrics, User
+from app.models.models import Card, Review, StudySession, CardMetrics, User, Deck
 from app.schemas.review import ReviewCreate
 from app.schemas.study_session import (
     StudySessionStart,
@@ -15,7 +15,9 @@ from app.schemas.study_session import (
     StudySessionAnalytics,
     StudyCardResponse,
     AnswerSubmit,
-    AnswerSubmitResponse
+    AnswerSubmitResponse,
+    CardAnalytics,
+    CardAttempt
 )
 from app.services.scheduler import apply_sm2_formula
 
@@ -358,4 +360,101 @@ def submit_answer(
         response_quality=response_quality,
         next_due_date=card.due_date,
         card_id=card.id
+    )
+
+
+# ============================================================================
+# ANALYTICS ENDPOINTS
+# ============================================================================
+
+@router.get("/analytics/card/{card_id}", response_model=CardAnalytics)
+def get_card_analytics(
+    card_id: int,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user)
+):
+    """
+    Get detailed analytics for a specific card.
+
+    Returns:
+    - Total reviews and correct count
+    - Accuracy rate and trend
+    - Average response time
+    - Recent attempt history (last 10)
+    - Current spaced repetition interval
+    """
+    # Get the card
+    card = db.get(Card, card_id)
+    if not card:
+        raise HTTPException(404, "Card not found")
+
+    # Verify user owns this card's deck
+    deck = db.get(Deck, card.deck_id)
+    if not deck or deck.user_id != user.id:
+        raise HTTPException(403, "Access denied")
+
+    # Get all reviews for this card by this user
+    reviews = db.query(Review).filter(
+        Review.card_id == card_id,
+        Review.user_id == user.id
+    ).order_by(Review.reviewed_at.desc()).all()
+
+    total_reviews = len(reviews)
+    correct_reviews = sum(1 for r in reviews if r.response >= 3)  # SM-2: 3+ is correct
+
+    # Calculate accuracy trend (recent vs older)
+    accuracy_trend = 0.0
+    if total_reviews >= 6:
+        # Compare last 3 vs previous 3
+        recent_reviews = reviews[:3]
+        older_reviews = reviews[3:6]
+
+        recent_correct = sum(1 for r in recent_reviews if r.response >= 3)
+        older_correct = sum(1 for r in older_reviews if r.response >= 3)
+
+        recent_accuracy = (recent_correct / len(recent_reviews)) * 100
+        older_accuracy = (older_correct / len(older_reviews)) * 100
+
+        accuracy_trend = recent_accuracy - older_accuracy
+
+    # Get detailed metrics for recent attempts
+    recent_attempts = []
+    for review in reviews[:10]:  # Last 10 attempts
+        # Try to get detailed metrics
+        metrics = db.query(CardMetrics).filter(
+            CardMetrics.review_id == review.id
+        ).first()
+
+        # Determine mode from session
+        session = db.get(StudySession, review.session_id) if review.session_id else None
+        mode = session.session_type.title() if session else "Study"
+
+        # Map mode to frontend expectations
+        mode_map = {
+            "writing": "Writing",
+            "multiple_choice": "MC",
+            "flashcards": "Flashcard"
+        }
+        mode = mode_map.get(mode.lower(), mode)
+
+        attempt = CardAttempt(
+            date=review.reviewed_at,
+            correct=review.response >= 3,
+            time_taken=review.took_ms,
+            similarity_score=metrics.similarity_score * 100 if metrics and metrics.similarity_score else None,
+            mode=mode
+        )
+        recent_attempts.append(attempt)
+
+    return CardAnalytics(
+        card_id=card.id,
+        total_reviews=total_reviews,
+        correct_reviews=correct_reviews,
+        accuracy_rate=card.accuracy_rate,
+        avg_response_time=card.avg_response_time,
+        current_interval_days=card.interval_days,
+        accuracy_trend=accuracy_trend,
+        recent_attempts=recent_attempts,
+        times_seen=card.times_seen,
+        last_reviewed=card.last_reviewed
     )
