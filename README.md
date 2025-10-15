@@ -17,9 +17,11 @@ visual dashboards and statistics of your progress with each deck.
 ### Cards Management Page
 <img width="1307" height="905" alt="image" src="https://github.com/user-attachments/assets/5cb45a80-d718-40cd-8463-cd57331829a9" />
 
+### Cards Management Page - Cards Statistics Feature
+<img width="1370" height="892" alt="image" src="https://github.com/user-attachments/assets/3b020b98-8098-4e35-8c59-3a672ce37699" />
+
 ### Study Feature - Flashcards
 <img width="1277" height="837" alt="image" src="https://github.com/user-attachments/assets/be9a9675-a9cc-4d07-96dd-b1c082b71ca3" />
-
 
 ### Study Feature - Writing
 <img width="1265" height="837" alt="image" src="https://github.com/user-attachments/assets/87e27399-8f80-467f-8f10-785b6e1bd7f9" />
@@ -118,6 +120,7 @@ General ability to search for publicly published decks
 ---
 
 **Note**: This application is under active development. Features and documentation are subject to change.
+
 
 
 
