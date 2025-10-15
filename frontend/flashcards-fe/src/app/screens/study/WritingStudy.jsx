@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useStudy } from '../../context/studySessionContext';
 import './WritingStudy.scss';
@@ -31,6 +31,7 @@ const WritingStudy = ({ deckId }) => {
     } = useStudy();
 
     const router = useRouter();
+    const feedbackRef = useRef(null);
 
     // Start session when component mounts
     useEffect(() => {
@@ -38,6 +39,13 @@ const WritingStudy = ({ deckId }) => {
             handleStartSession();
         }
     }, [deckId]);
+
+    // Focus feedback section when it appears
+    useEffect(() => {
+        if (showFeedback && feedbackRef.current) {
+            feedbackRef.current.focus();
+        }
+    }, [showFeedback]);
 
     const handleStartSession = async () => {
         try {
@@ -216,7 +224,12 @@ const WritingStudy = ({ deckId }) => {
                         </button>
                     </div>
                 ) : (
-                    <div className="feedback-section">
+                    <div
+                        ref={feedbackRef}
+                        className="feedback-section"
+                        tabIndex="0"
+                        onKeyDown={(e) => e.key === 'Enter' && nextCard()}
+                    >
                         <div className={`result-header ${
                             lastResult.correct ? 'correct' :
                             (lastResult.similarity_score * 100) > 75 ? 'partial' :
