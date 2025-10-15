@@ -1,13 +1,10 @@
 from fastapi import APIRouter, Depends, Query, HTTPException
 from sqlalchemy.orm import Session
-from sqlalchemy import select
-from datetime import date, datetime, timezone
+from datetime import datetime, timezone
 from typing import List
-from difflib import SequenceMatcher
 from app.core.database import get_db
 from app.core.dependencies import get_current_user
-from app.models.models import Card, Review, StudySession, CardMetrics, User
-from app.schemas.review import ReviewCreate
+from app.models.models import Card, StudySession, User, Deck
 from app.schemas.study_session import (
     StudySessionStart,
     StudySessionEnd,
@@ -15,37 +12,14 @@ from app.schemas.study_session import (
     StudySessionAnalytics,
     StudyCardResponse,
     AnswerSubmit,
-    AnswerSubmitResponse
+    AnswerSubmitResponse,
+    CardAnalytics
 )
-from app.services.scheduler import apply_sm2_formula
+from app.services.study_service import StudyService
+from app.services.analytics_service import AnalyticsService
+from app.repositories.card_repository import CardRepository
 
 router = APIRouter()
-
-
-# ============================================================================
-# HELPER FUNCTIONS
-# ============================================================================
-
-def normalize_answer(text: str) -> str:
-    """
-    Normalize answer text for better fuzzy matching.
-    Handles common variations like punctuation, extra spaces, articles, etc.
-    """
-    import re
-
-    # Convert to lowercase and strip
-    text = text.lower().strip()
-
-    # Remove common punctuation
-    text = re.sub(r'[.,!?;:\-\'"()\[\]{}]', '', text)
-
-    # Replace multiple spaces with single space
-    text = re.sub(r'\s+', ' ', text)
-
-    # Remove common articles at the start (the, a, an)
-    text = re.sub(r'^(the|a|an)\s+', '', text)
-
-    return text
 
 
 # ============================================================================
@@ -85,37 +59,7 @@ def end_study_session(
     if session.ended_at is not None:
         raise HTTPException(400, "Session already ended")
 
-    session.ended_at = datetime.now(timezone.utc)
-
-    reviews = db.query(Review).filter(Review.session_id == session.id).all()
-
-    if reviews:
-        total_time = sum(r.took_ms for r in reviews)
-        session.cards_studied = len(reviews)
-        session.correct_count = sum(1 for r in reviews if r.response >= 3)
-        session.incorrect_count = sum(1 for r in reviews if r.response < 3)
-        session.average_time_per_card = total_time // len(reviews) if reviews else 0
-
-    db.commit()
-    db.refresh(session)
-
-    accuracy_rate = (session.correct_count / session.cards_studied * 100) if session.cards_studied > 0 else 0.0
-    total_time_spent = sum(r.took_ms for r in reviews)
-
-    return StudySessionAnalytics(
-        id=session.id,
-        user_id=session.user_id,
-        deck_id=session.deck_id,
-        started_at=session.started_at,
-        ended_at=session.ended_at,
-        cards_studied=session.cards_studied,
-        correct_count=session.correct_count,
-        incorrect_count=session.incorrect_count,
-        session_type=session.session_type,
-        average_time_per_card=session.average_time_per_card,
-        accuracy_rate=accuracy_rate,
-        total_time_spent=total_time_spent
-    )
+    return StudyService.end_session_and_get_analytics(db, session)
 
 
 @router.get("/session/{session_id}", response_model=StudySessionRead)
@@ -140,18 +84,7 @@ def get_due_cards(
     limit: int = Query(20, ge=1, le=100, description="Maximum number of cards to return"),
     db: Session = Depends(get_db)
 ):
-    stmt = (
-        select(Card)
-        .where(
-            Card.deck_id == deck_id,
-            Card.suspended == False,
-            Card.due_date <= datetime.now(timezone.utc)
-        )
-        .order_by(Card.due_date.asc())
-        .limit(limit)
-    )
-
-    cards = db.scalars(stmt).all()
+    cards = CardRepository.get_due_cards(db, deck_id, limit)
 
     return [
         StudyCardResponse(
@@ -169,18 +102,7 @@ def get_new_cards(
     limit: int = Query(20, ge=1, le=100, description="Maximum number of cards to return"),
     db: Session = Depends(get_db)
 ):
-    stmt = (
-        select(Card)
-        .where(
-            Card.deck_id == deck_id,
-            Card.suspended == False,
-            Card.reps == 0
-        )
-        .order_by(Card.created_at.asc())
-        .limit(limit)
-    )
-
-    cards = db.scalars(stmt).all()
+    cards = CardRepository.get_new_cards(db, deck_id, limit)
 
     return [
         StudyCardResponse(
@@ -198,17 +120,7 @@ def get_all_cards(
     limit: int = Query(50, ge=1, le=200, description="Maximum number of cards to return"),
     db: Session = Depends(get_db)
 ):
-    stmt = (
-        select(Card)
-        .where(
-            Card.deck_id == deck_id,
-            Card.suspended == False
-        )
-        .order_by(Card.created_at.desc())
-        .limit(limit)
-    )
-
-    cards = db.scalars(stmt).all()
+    cards = CardRepository.get_all_cards(db, deck_id, limit)
 
     return [
         StudyCardResponse(
@@ -255,107 +167,37 @@ def submit_answer(
     if not session:
         raise HTTPException(404, "Session not found")
 
-    # Calculate similarity score using fuzzy matching
-    # First, normalize both answers to handle common variations
-    user_answer_normalized = normalize_answer(payload.user_input)
-    correct_answer_normalized = normalize_answer(card.answer)
+    return StudyService.submit_answer(db, card, session, payload)
 
-    # Use SequenceMatcher for fuzzy string matching (0.0 to 1.0)
-    similarity_score = SequenceMatcher(
-        None,
-        user_answer_normalized,
-        correct_answer_normalized
-    ).ratio()
 
-    # Consider "correct" if similarity is above 95%
-    is_correct = similarity_score >= 0.95
+# ============================================================================
+# ANALYTICS ENDPOINTS
+# ============================================================================
 
-    # Map similarity to SM-2 response quality (0-4)
-    if similarity_score >= 0.95:
-        response_quality = 4  # Perfect recall
-    elif similarity_score >= 0.8:
-        response_quality = 3  # Correct with hesitation
-    elif similarity_score >= 0.6:
-        response_quality = 2  # Recalled with difficulty
-    elif similarity_score >= 0.4:
-        response_quality = 1  # Incorrect but remembered something
-    else:
-        response_quality = 0  # Complete blank
+@router.get("/analytics/card/{card_id}", response_model=CardAnalytics)
+def get_card_analytics(
+    card_id: int,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user)
+):
+    """
+    Get detailed analytics for a specific card.
 
-    review = Review(
-        card_id=card.id,
-        user_id=session.user_id,
-        session_id=session.id,
-        response=response_quality,
-        took_ms=payload.time_taken_ms
-    )
-    db.add(review)
-    db.flush()
+    Returns:
+    - Total reviews and correct count
+    - Accuracy rate and trend
+    - Average response time
+    - Recent attempt history (last 10)
+    - Current spaced repetition interval
+    """
+    # Get the card
+    card = db.get(Card, card_id)
+    if not card:
+        raise HTTPException(404, "Card not found")
 
-    apply_sm2_formula(card, response_quality)
+    # Verify user owns this card's deck
+    deck = db.get(Deck, card.deck_id)
+    if not deck or deck.user_id != user.id:
+        raise HTTPException(403, "Access denied")
 
-    # Update card statistics
-    card.times_seen += 1
-    card.last_reviewed = datetime.now(timezone.utc)
-
-    # Update accuracy rate (running average)
-    if card.times_seen == 1:
-        card.accuracy_rate = 100.0 if is_correct else 0.0
-    else:
-        # Weighted average
-        card.accuracy_rate = (
-            (card.accuracy_rate * (card.times_seen - 1) + (100.0 if is_correct else 0.0))
-            / card.times_seen
-        )
-
-    # Update average response time
-    if card.times_seen == 1:
-        card.avg_response_time = payload.time_taken_ms
-    else:
-        card.avg_response_time = (
-            (card.avg_response_time * (card.times_seen - 1) + payload.time_taken_ms)
-            // card.times_seen
-        )
-
-    # Create detailed metrics record for ML
-    now = datetime.now(timezone.utc)
-    hour = now.hour
-
-    if 5 <= hour < 12:
-        time_of_day = "morning"
-    elif 12 <= hour < 17:
-        time_of_day = "afternoon"
-    elif 17 <= hour < 21:
-        time_of_day = "evening"
-    else:
-        time_of_day = "night"
-
-    metrics = CardMetrics(
-        card_id=card.id,
-        session_id=session.id,
-        review_id=review.id,
-        user_input=payload.user_input,
-        was_correct=is_correct,
-        similarity_score=similarity_score,
-        time_taken_ms=payload.time_taken_ms,
-        typed_chars=payload.typed_chars or 0,
-        backspace_count=payload.backspace_count or 0,
-        hesitation_detected=payload.hesitation_detected or False,
-        typing_speed_cpm=payload.typing_speed_cpm or 0,
-        time_of_day=time_of_day,
-        day_of_week=now.strftime("%A").lower(),
-        session_position=session.cards_studied + 1,
-        self_rated_difficulty=payload.self_rated_difficulty
-    )
-    db.add(metrics)
-
-    db.commit()
-
-    return AnswerSubmitResponse(
-        correct=is_correct,
-        similarity_score=similarity_score,
-        correct_answer=card.answer,
-        response_quality=response_quality,
-        next_due_date=card.due_date,
-        card_id=card.id
-    )
+    return AnalyticsService.get_card_analytics(db, card, user.id)

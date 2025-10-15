@@ -1,4 +1,6 @@
-import "./CardComponent.scss"
+import { useState } from "react";
+import "./CardComponent.scss";
+import CardStatsModal from "./CardStatsModal";
 
 const getDifficultyClass = (accuracyRate) => {
     const ranges = [
@@ -11,6 +13,7 @@ const getDifficultyClass = (accuracyRate) => {
 };
 
 const CardComponent = ({ card, onEdit, onDelete, onGetStats }) => {
+    const [isStatsOpen, setIsStatsOpen] = useState(false);
     return (
         <div className={`fc-card-item ${getDifficultyClass(card.accuracy_rate)}`}>
             <div className="fc-card-content">
@@ -35,7 +38,7 @@ const CardComponent = ({ card, onEdit, onDelete, onGetStats }) => {
                     <div className="fc-card-actions">
                         <button
                             className="fc-card-action-btn fc-edit-btn"
-                            // onClick={() => onGetStats(card)}
+                            onClick={() => setIsStatsOpen(true)}
                             title="Stats"
                         >
                             Stats
@@ -58,6 +61,11 @@ const CardComponent = ({ card, onEdit, onDelete, onGetStats }) => {
                 </div>
             </div>
 
+            <CardStatsModal
+                card={card}
+                isOpen={isStatsOpen}
+                onClose={() => setIsStatsOpen(false)}
+            />
         </div>
     );
 };

@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
 # Session Management Schemas
 class StudySessionStart(BaseModel):
@@ -61,3 +61,31 @@ class AnswerSubmitResponse(BaseModel):
     response_quality: int = Field(ge=0, le=4, description="SM-2 response quality (0-4)")
     next_due_date: datetime
     card_id: int
+
+# Card Analytics Schemas
+class CardAttempt(BaseModel):
+    """Individual attempt/review of a card"""
+    date: datetime
+    correct: bool
+    time_taken: int  # milliseconds
+    similarity_score: Optional[float] = None
+    mode: str
+
+    class Config:
+        from_attributes = True
+
+class CardAnalytics(BaseModel):
+    """Analytics data for a specific card"""
+    card_id: int
+    total_reviews: int
+    correct_reviews: int
+    accuracy_rate: float
+    avg_response_time: int  # milliseconds
+    current_interval_days: int
+    accuracy_trend: float  # Percentage change in recent accuracy
+    recent_attempts: List[CardAttempt]
+    times_seen: int
+    last_reviewed: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
