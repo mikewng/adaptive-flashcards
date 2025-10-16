@@ -14,11 +14,14 @@ visual dashboards and statistics of your progress with each deck.
 ### Decks Management Page
 <img width="1537" height="908" alt="image" src="https://github.com/user-attachments/assets/0946c4b9-f74b-4b1a-8c73-ae27bceb8749" />
 
+### Browse Public Decks Page
+<img width="1414" height="672" alt="image" src="https://github.com/user-attachments/assets/f7d25fdf-0265-4ebb-a27a-4e2ab7f04358" />
+
 ### Cards Management Page
 <img width="1600" height="778" alt="image" src="https://github.com/user-attachments/assets/fd9e1ab7-9dad-4d69-8b3e-adf3a22fed63" />
 
 ### Cards Management Page - Cards Statistics Feature
-<img width="1370" height="892" alt="image" src="https://github.com/user-attachments/assets/3b020b98-8098-4e35-8c59-3a672ce37699" />
+<img width="1322" height="851" alt="image" src="https://github.com/user-attachments/assets/e606653e-9b61-45e6-b53b-b2f6956b5f0d" />
 
 ### Study Feature - Flashcards
 <img width="1277" height="837" alt="image" src="https://github.com/user-attachments/assets/be9a9675-a9cc-4d07-96dd-b1c082b71ca3" />
@@ -127,6 +130,7 @@ Basic functionalities such as creating, updating, deleting, and reviewing decks 
 ---
 
 **Note**: This application is under active development. Features and documentation are subject to change.
+
 
 
 
