@@ -62,6 +62,17 @@ export const DeckProvider = ({ children }) => {
         }
     }, [fetchDeckAndCards]);
 
+    const updateDeck = useCallback(async (deckId, deckData) => {
+        try {
+            const updatedDeck = await flashcardApiService.updateDeck(deckId, deckData);
+            setDeck(updatedDeck);
+            return updatedDeck;
+        } catch (err) {
+            console.error('Error updating deck:', err);
+            throw err;
+        }
+    }, []);
+
     const clearDeck = useCallback(() => {
         setDeck(null);
         setCards([]);
@@ -77,6 +88,7 @@ export const DeckProvider = ({ children }) => {
         createCard,
         updateCard,
         deleteCard,
+        updateDeck,
         clearDeck
     };
 
