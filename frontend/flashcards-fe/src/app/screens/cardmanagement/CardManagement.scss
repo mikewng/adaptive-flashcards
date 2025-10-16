@@ -34,6 +34,17 @@
             }
         }
 
+        .fc-readonly-badge {
+            padding: 0.6rem 1.5rem;
+            background-color: #e3f2fd;
+            color: #1976d2;
+            border: 2px solid #90caf9;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            white-space: nowrap;
+        }
+
         .fc-back-btn {
             background-color: #6c757d;
             color: white;

@@ -4,7 +4,7 @@ from app.core.database import get_db
 from sqlalchemy import select, func, case
 from app.models.models import Deck, Card, User
 from app.schemas.deck import DeckCreate, DeckRead, DeckUpdate, PublicDeckRead
-from app.core.dependencies import get_current_user
+from app.core.dependencies import get_current_user, get_current_user_optional
 from datetime import datetime, timezone
 from typing import Optional
 
@@ -159,9 +159,9 @@ def browse_public_decks(
 def get_deck(
     deck_id: int,
     db: Session = Depends(get_db),
-    user = Depends(get_current_user)
+    user = Depends(get_current_user_optional)
 ):
-    """Get a specific deck. Must be public or owned by user."""
+    """Get a specific deck. Public decks accessible to anyone, private decks only to owner."""
     deck = get_deck_or_404(deck_id, db)
     check_deck_access(deck, user.id if user else None)
     return deck

@@ -7,9 +7,9 @@ import { useAuth } from '../../context/userAuthContext';
 import './PublicDecksView.scss';
 import ModalComponent from '../../components/ModalComponent';
 
-const PublicDeckCard = ({ deck, onCopy, isAuthenticated }) => {
+const PublicDeckCard = ({ deck, onCopy, onClick, isAuthenticated }) => {
     return (
-        <div className="fc-public-deck-card">
+        <div className="fc-public-deck-card" onClick={() => onClick(deck.id)}>
             <div className="fc-deck-header">
                 <h3 className="fc-deck-name">{deck.name}</h3>
                 {isAuthenticated && (
@@ -95,6 +95,10 @@ const PublicDecksView = () => {
         }
     };
 
+    const handleDeckClick = (deckId) => {
+        router.push(`/pages/public-decks/${deckId}`);
+    };
+
     if (loading) {
         return (
             <div className="fc-public-decks-wrapper">
@@ -161,6 +165,7 @@ const PublicDecksView = () => {
                             key={deck.id}
                             deck={deck}
                             onCopy={handleCopyDeck}
+                            onClick={handleDeckClick}
                             isAuthenticated={isAuthenticated}
                         />
                     ))
