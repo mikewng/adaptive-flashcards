@@ -44,10 +44,10 @@ Basic functionalities such as creating, updating, deleting, and reviewing decks 
   - Bayesian Knowledge Tracing: Tracking mastery of a certain card
   - Feed Forward Neural Networks: A combination of both concepts merged into one to conduct pattern recognition of a user's behavior on each card.
 - Language Model:
-  - Assistant that can provide a general summary of trends of mistakes and success of a deck.
+  - An assistant that can provide a general summary of trends of mistakes and success of a deck.
 
-## Community Features (Planned)
-General ability to search for publicly published decks
+## Community Features
+- Ability to search for and copy published decks from other users
 
 # App Structure and Tech Stack
 ## Frontend (ReactJS, JavaScript)
@@ -59,7 +59,7 @@ General ability to search for publicly published decks
 - **Development Server**: Next.js dev server (port 3000)
 
 ## Backend (FastAPI, Python)
-### The entrypoint into flashcard CRUD and service logic .
+### The entrypoint into flashcard CRUD and service logic.
 - **Framework**: FastAPI 0.118.0
 - **Server**: Uvicorn 0.37.0
 - **Language**: Python 3.x
@@ -85,6 +85,11 @@ General ability to search for publicly published decks
 - **Networking**: Bridge network for inter-service communication
 - **Data Persistence**: Docker volumes for PostgreSQL data
 
+## Deployment
+### Pipelines and instances required to publish application and make it publicly accessible
+- **Pipelines**: GitHub Workflow Pipelines to help speed up deployment from main branch
+- **VM Instance**: AWS EC2 for a constant running ubuntu virtual machine to run the docker container.
+
 # Getting Started
 ### Prerequisites
 - **Docker & Docker Compose** (recommended for full setup)
@@ -92,8 +97,10 @@ General ability to search for publicly published decks
 - **Python 3.10+** (for local backend development)
 - **PostgreSQL 16** (if running locally without Docker)
 
-## Quick Start
+## Quick Start (Local) - Docker
+1. docker-compose -f docker-compose.prod.yml up -d --build
 
+## Manual Start (Local)
 ### Front End
 1. cd frontend -> cd flashcards-fe
 2. npm i (first time)
@@ -120,6 +127,7 @@ General ability to search for publicly published decks
 ---
 
 **Note**: This application is under active development. Features and documentation are subject to change.
+
 
 
 
