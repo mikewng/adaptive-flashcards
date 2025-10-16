@@ -24,6 +24,7 @@ class Deck(Base):
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
     name = Column(String, nullable=False)
     description = Column(Text, default="")
+    is_private = Column(Boolean, nullable=False, default=True, index=True)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     owner = relationship("User", back_populates="decks")

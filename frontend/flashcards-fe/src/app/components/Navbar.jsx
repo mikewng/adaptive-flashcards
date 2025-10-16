@@ -62,6 +62,11 @@ const Navbar = () => {
                             <Link href="/" className="fc-nav-link" onClick={() => setMobileMenuOpen(false)}>Home</Link>
                         </div>
                     }
+                    <div className="fc-nav-option">
+                        <Link href="/pages/public-decks" className="fc-nav-link" onClick={() => setMobileMenuOpen(false)}>
+                            Browse Public Decks
+                        </Link>
+                    </div>
                     {
                         isAuthenticated &&
                         <div className="fc-auth-links">

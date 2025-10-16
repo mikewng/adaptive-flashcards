@@ -28,6 +28,29 @@ class FlashCardApiService {
         });
     }
 
+    async updateDeck(deckId, deckContent) {
+        return apiWrapper.request(`/decks/${deckId}`, {
+            method: 'PATCH',
+            body: JSON.stringify(deckContent),
+        });
+    }
+
+    // Public deck APIs
+    async getPublicDecks(skip = 0, limit = 50, search = null) {
+        const params = new URLSearchParams({ skip: skip.toString(), limit: limit.toString() });
+        if (search) params.append('search', search);
+
+        return apiWrapper.request(`/decks/public?${params.toString()}`, {
+            method: 'GET',
+        });
+    }
+
+    async copyDeck(deckId) {
+        return apiWrapper.request(`/decks/${deckId}/copy`, {
+            method: 'POST',
+        });
+    }
+
     // CARD APIs
     async createCard(deckId, cardContent) {
         return apiWrapper.request(`/cards`, {

@@ -1,0 +1,217 @@
+.fc-public-decks-wrapper {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+
+    .fc-loading,
+    .fc-error {
+        text-align: center;
+        padding: 3rem;
+        font-size: 1.2rem;
+        color: #666;
+    }
+
+    .fc-error {
+        color: #dc3545;
+    }
+
+    .fc-public-decks-header {
+        margin-bottom: 2rem;
+        text-align: center;
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #333;
+            margin: 0 0 0.5rem 0;
+        }
+
+        .fc-subtitle {
+            font-size: 1.1rem;
+            color: #666;
+            margin: 0;
+        }
+    }
+
+    .fc-search-section {
+        margin-bottom: 2rem;
+
+        .fc-search-form {
+            display: flex;
+            gap: 1rem;
+            max-width: 600px;
+            margin: 0 auto;
+
+            .fc-search-input {
+                flex: 1;
+                padding: 0.75rem 1rem;
+                font-size: 1rem;
+                border: 2px solid #e0e0e0;
+                border-radius: 8px;
+                outline: none;
+                transition: border-color 0.2s ease;
+
+                &:focus {
+                    border-color: #007bff;
+                }
+            }
+
+            .fc-search-btn {
+                background-color: #007bff;
+                color: white;
+                border: none;
+                padding: 0.75rem 1.5rem;
+                font-size: 1rem;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: background-color 0.2s ease;
+                white-space: nowrap;
+
+                &:hover {
+                    background-color: #0056b3;
+                }
+
+                &:active {
+                    transform: scale(0.98);
+                }
+            }
+        }
+    }
+
+    .fc-decks-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+
+        .fc-public-deck-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+            &:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                border-color: #007bff;
+            }
+
+            .fc-deck-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                margin-bottom: 1rem;
+
+                .fc-deck-name {
+                    font-size: 1.25rem;
+                    font-weight: 600;
+                    color: #333;
+                    margin: 0;
+                    flex: 1;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+
+                .fc-copy-btn {
+                    background-color: #28a745;
+                    color: white;
+                    border: none;
+                    padding: 0.5rem 1rem;
+                    font-size: 0.9rem;
+                    border-radius: 6px;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                    white-space: nowrap;
+                    margin-left: 1rem;
+
+                    &:hover {
+                        background-color: #218838;
+                    }
+
+                    &:active {
+                        transform: scale(0.95);
+                    }
+                }
+            }
+
+            .fc-deck-info {
+                display: flex;
+                flex-direction: column;
+                gap: 0.75rem;
+
+                .fc-deck-description {
+                    color: #666;
+                    line-height: 1.5;
+                    margin: 0;
+                    overflow: hidden;
+                    display: -webkit-box;
+                    -webkit-line-clamp: 2;
+                    -webkit-box-orient: vertical;
+                }
+
+                .fc-deck-meta {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    font-size: 0.9rem;
+                    color: #999;
+
+                    .fc-card-count {
+                        font-weight: 500;
+                        color: #007bff;
+                    }
+
+                    .fc-deck-owner {
+                        font-style: italic;
+                        color: #666;
+                    }
+                }
+            }
+        }
+
+        .fc-no-decks {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #666;
+
+            p {
+                font-size: 1.1rem;
+                margin: 0;
+            }
+        }
+    }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+    .fc-public-decks-wrapper {
+        padding: 1rem;
+
+        .fc-public-decks-header {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .fc-subtitle {
+                font-size: 1rem;
+            }
+        }
+
+        .fc-search-section {
+            .fc-search-form {
+                flex-direction: column;
+                max-width: 100%;
+
+                .fc-search-btn {
+                    width: 100%;
+                }
+            }
+        }
+
+        .fc-decks-list {
+            grid-template-columns: 1fr;
+        }
+    }
+}
