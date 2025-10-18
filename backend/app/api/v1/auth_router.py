@@ -7,19 +7,27 @@ from app.core.database import get_db
 from app.core.security import hash_password, verify_password, create_access_token, create_refresh_token, decode_token
 from app.core.dependencies import get_current_user, oauth2_scheme
 from app.models.models import User, RefreshToken, TokenBlacklist
-from app.schemas.user import UserCreate, UserRead
+from app.schemas.user import UserCreate, UserRead, UserUpdate
 from app.schemas.auth import LoginRequest, TokenResponse, RefreshTokenRequest, LogoutRequest
 
 router = APIRouter()
 
 @router.post("/register", response_model=UserRead, status_code=201)
 def register(payload: UserCreate, db: Session = Depends(get_db)):
-    print("PW: ",payload.password)
     exists = db.query(User).filter(User.email == payload.email).first()
     if exists:
         raise HTTPException(status_code=400, detail="Email already registered")
-    user = User(email=payload.email, password_hash=hash_password(payload.password))
-    db.add(user); db.commit(); db.refresh(user)
+
+    user = User(
+        email=payload.email,
+        password_hash=hash_password(payload.password),
+        first_name=payload.first_name,
+        last_name=payload.last_name,
+        timezone=payload.timezone
+    )
+    db.add(user)
+    db.commit()
+    db.refresh(user)
     return user
 
 @router.post("/login", response_model=TokenResponse)
@@ -49,6 +57,24 @@ def login(
 @router.get("/me", response_model=UserRead)
 def me(current=Depends(get_current_user)):
     return current
+
+@router.patch("/me", response_model=UserRead)
+def update_profile(
+    payload: UserUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Update current user's profile information"""
+    if payload.first_name is not None:
+        current_user.first_name = payload.first_name
+    if payload.last_name is not None:
+        current_user.last_name = payload.last_name
+    if payload.timezone is not None:
+        current_user.timezone = payload.timezone
+
+    db.commit()
+    db.refresh(current_user)
+    return current_user
 
 @router.post("/refresh", response_model=TokenResponse)
 def refresh(payload: RefreshTokenRequest, db: Session = Depends(get_db)):

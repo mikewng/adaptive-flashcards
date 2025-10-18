@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { studyApiService } from '../../../utils/studyApis';
 import ModalComponent from '../../../components/ModalComponent';
+import { useAuth } from '../../../context/userAuthContext';
+import { formatDateInTimezone, getDaysUntilDue } from '../../../utils/dateFormatter';
 import './CardStatsModal.scss';
 
 const getDifficultyClass = (accuracyRate) => {
@@ -17,6 +19,8 @@ const getDifficultyClass = (accuracyRate) => {
 };
 
 const CardStatsModal = ({ card, isOpen, onClose }) => {
+    const { user } = useAuth();
+    const userTimezone = user?.timezone || 'UTC';
     const [analytics, setAnalytics] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -67,18 +71,17 @@ const CardStatsModal = ({ card, isOpen, onClose }) => {
 
     const trend = getTrend();
 
-    // Format due date
-    const formatDueDate = (date) => {
+    // Format due date with timezone awareness
+    const formatDueDateWithDays = (date) => {
         if (!date) return 'Not scheduled';
-        const dueDate = new Date(date);
-        const now = new Date();
-        const diffTime = dueDate - now;
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-        if (diffDays < 0) return `Overdue by ${Math.abs(diffDays)} days`;
-        if (diffDays === 0) return 'Due today';
-        if (diffDays === 1) return 'Due tomorrow';
-        return `Due in ${diffDays} days`;
+        const daysUntil = getDaysUntilDue(date);
+        if (daysUntil === null) return 'Not scheduled';
+
+        if (daysUntil < 0) return `Overdue by ${Math.abs(daysUntil)} days`;
+        if (daysUntil === 0) return 'Due today';
+        if (daysUntil === 1) return 'Due tomorrow';
+        return `Due in ${daysUntil} days`;
     };
 
     // Format time
@@ -88,7 +91,7 @@ const CardStatsModal = ({ card, isOpen, onClose }) => {
         return `${(ms / 1000).toFixed(1)}s`;
     };
 
-    // Format attempt
+    // Format attempt with timezone awareness
     const formatAttemptDate = (dateString) => {
         const date = new Date(dateString);
         const now = new Date();
@@ -97,7 +100,11 @@ const CardStatsModal = ({ card, isOpen, onClose }) => {
         if (diffDays === 0) return 'Today';
         if (diffDays === 1) return 'Yesterday';
         if (diffDays < 7) return `${diffDays} days ago`;
-        return date.toLocaleDateString();
+        return formatDateInTimezone(dateString, userTimezone, {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
+        });
     };
 
     return (
@@ -143,7 +150,7 @@ const CardStatsModal = ({ card, isOpen, onClose }) => {
                                     <span className="fc-stats-icon">📅</span>
                                     <div className="fc-stats-box-content">
                                         <span className="fc-stats-box-label">Next Review</span>
-                                        <span className="fc-stats-box-value">{formatDueDate(card.due_date)}</span>
+                                        <span className="fc-stats-box-value">{formatDueDateWithDays(card.due_date)}</span>
                                     </div>
                                 </div>
                                 <div className="fc-stats-box">

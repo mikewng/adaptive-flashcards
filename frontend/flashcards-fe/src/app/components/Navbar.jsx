@@ -84,13 +84,20 @@ const Navbar = () => {
                             <div className="fc-nav-option">
                                 <Link href="/pages/decks" className="fc-nav-link" onClick={() => setMobileMenuOpen(false)}>My Decks</Link>
                             </div>
+                            <div className="fc-nav-option">
+                                <Link href="/pages/profile" className="fc-nav-link" onClick={() => setMobileMenuOpen(false)}>Profile</Link>
+                            </div>
                         </div>
                     }
 
                     <div className="fc-nav-account-container">
                         {isAuthenticated ? (
                             <>
-                                <span className="fc-nav-user-email">{user?.email}</span>
+                                <span className="fc-nav-user-email">
+                                    {user?.first_name || user?.last_name
+                                        ? `${user.first_name || ''} ${user.last_name || ''}`.trim()
+                                        : user?.email}
+                                </span>
                                 <button className="fc-nav-button" onClick={() => {
                                     handleLogout();
                                     setMobileMenuOpen(false);

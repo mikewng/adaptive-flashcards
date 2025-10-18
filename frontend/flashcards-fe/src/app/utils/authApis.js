@@ -15,16 +15,29 @@ class AuthApiService {
         });
     }
 
-    async register(email, password) {
+    async register(email, password, firstName = null, lastName = null, timezone = 'UTC') {
         return apiWrapper.request('/auth/register', {
             method: 'POST',
-            body: JSON.stringify({ email, password }),
+            body: JSON.stringify({
+                email,
+                password,
+                first_name: firstName,
+                last_name: lastName,
+                timezone
+            }),
         });
     }
 
     async getCurrentUser() {
         return apiWrapper.request('/auth/me', {
             method: 'GET',
+        });
+    }
+
+    async updateProfile(updates) {
+        return apiWrapper.request('/auth/me', {
+            method: 'PATCH',
+            body: JSON.stringify(updates),
         });
     }
 

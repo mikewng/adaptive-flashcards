@@ -10,6 +10,9 @@ const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [timezone, setTimezone] = useState(Intl.DateTimeFormat().resolvedOptions().timeZone);
     const [formError, setFormError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
@@ -54,7 +57,7 @@ const Login = () => {
         try {
             const result = isLogin
                 ? await login(email, password)
-                : await register(email, password);
+                : await register(email, password, firstName, lastName, timezone);
 
             if (result.success) {
                 router.push('/pages/decks');
@@ -74,6 +77,9 @@ const Login = () => {
         setEmail('');
         setPassword('');
         setConfirmPassword('');
+        setFirstName('');
+        setLastName('');
+        setTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone);
     };
 
     return (
@@ -91,6 +97,40 @@ const Login = () => {
                     </p>
 
                     <form onSubmit={handleSubmit} className="fc-login-form">
+                        {!isLogin && (
+                            <>
+                                <div className="fc-form-group">
+                                    <label htmlFor="firstName" className="fc-form-label">
+                                        First Name (Optional)
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="firstName"
+                                        className="fc-form-input"
+                                        placeholder="Enter your first name"
+                                        value={firstName}
+                                        onChange={(e) => setFirstName(e.target.value)}
+                                        disabled={isLoading}
+                                    />
+                                </div>
+
+                                <div className="fc-form-group">
+                                    <label htmlFor="lastName" className="fc-form-label">
+                                        Last Name (Optional)
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="lastName"
+                                        className="fc-form-input"
+                                        placeholder="Enter your last name"
+                                        value={lastName}
+                                        onChange={(e) => setLastName(e.target.value)}
+                                        disabled={isLoading}
+                                    />
+                                </div>
+                            </>
+                        )}
+
                         <div className="fc-form-group">
                             <label htmlFor="email" className="fc-form-label">
                                 Email
@@ -122,20 +162,41 @@ const Login = () => {
                         </div>
 
                         {!isLogin && (
-                            <div className="fc-form-group">
-                                <label htmlFor="confirmPassword" className="fc-form-label">
-                                    Confirm Password
-                                </label>
-                                <input
-                                    type="password"
-                                    id="confirmPassword"
-                                    className="fc-form-input"
-                                    placeholder="Confirm your password"
-                                    value={confirmPassword}
-                                    onChange={(e) => setConfirmPassword(e.target.value)}
-                                    disabled={isLoading}
-                                />
-                            </div>
+                            <>
+                                <div className="fc-form-group">
+                                    <label htmlFor="confirmPassword" className="fc-form-label">
+                                        Confirm Password
+                                    </label>
+                                    <input
+                                        type="password"
+                                        id="confirmPassword"
+                                        className="fc-form-input"
+                                        placeholder="Confirm your password"
+                                        value={confirmPassword}
+                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                        disabled={isLoading}
+                                    />
+                                </div>
+
+                                <div className="fc-form-group">
+                                    <label htmlFor="timezone" className="fc-form-label">
+                                        Timezone
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="timezone"
+                                        className="fc-form-input"
+                                        placeholder="Your timezone"
+                                        value={timezone}
+                                        onChange={(e) => setTimezone(e.target.value)}
+                                        disabled={isLoading}
+                                        readOnly
+                                    />
+                                    <small style={{ color: '#666', fontSize: '0.85rem', marginTop: '0.25rem', display: 'block' }}>
+                                        Auto-detected from your browser
+                                    </small>
+                                </div>
+                            </>
                         )}
 
                         {(formError || authError) && (

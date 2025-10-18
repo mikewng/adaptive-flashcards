@@ -12,6 +12,9 @@ class User(Base):
     id = Column(Integer, primary_key=True, autoincrement=True, index=True)
     email = Column(String, unique=True, index=True, nullable=False)
     password_hash = Column(String, nullable=False)
+    first_name = Column(String, nullable=True)
+    last_name = Column(String, nullable=True)
+    timezone = Column(String, default="UTC", nullable=False)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     decks = relationship("Deck", back_populates="owner")

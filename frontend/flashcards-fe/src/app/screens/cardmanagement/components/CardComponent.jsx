@@ -1,6 +1,8 @@
 import { useState } from "react";
 import "./CardComponent.scss";
 import CardStatsModal from "./CardStatsModal";
+import { useAuth } from "../../../context/userAuthContext";
+import { formatDueDate, isOverdue } from "../../../utils/dateFormatter";
 
 const getDifficultyClass = (accuracyRate) => {
     const ranges = [
@@ -14,6 +16,10 @@ const getDifficultyClass = (accuracyRate) => {
 
 const CardComponent = ({ card, onEdit, onDelete, onGetStats, readOnly = false }) => {
     const [isStatsOpen, setIsStatsOpen] = useState(false);
+    const { user } = useAuth();
+    const userTimezone = user?.timezone || 'UTC';
+    const cardIsOverdue = isOverdue(card.due_date);
+
     return (
         <div className={`fc-card-item ${getDifficultyClass(card.accuracy_rate)} ${readOnly ? 'read-only' : ''}`}>
             <div className="fc-card-content">
@@ -26,11 +32,11 @@ const CardComponent = ({ card, onEdit, onDelete, onGetStats, readOnly = false })
                 <div className="fc-card-section split">
                     {
                         card.due_date ?
-                            <p className="fc-card-due-date">
-                                {"Due: " + new Date(card.due_date).toLocaleDateString() + " UTC"}
+                            <p className={`fc-card-due-date ${cardIsOverdue ? 'overdue' : ''}`}>
+                                {formatDueDate(card.due_date, userTimezone)}
                             </p>
                             :
-                            <p>None</p>
+                            <p>No due date</p>
                     }
 
                 </div>

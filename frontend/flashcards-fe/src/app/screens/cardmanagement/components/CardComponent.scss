@@ -47,6 +47,18 @@
                 white-space: pre-wrap;
                 word-wrap: break-word;
             }
+
+            .fc-card-due-date {
+                color: #666;
+                font-size: 0.95rem;
+                font-weight: 500;
+                margin: 0;
+
+                &.overdue {
+                    color: #dc3545;
+                    font-weight: 600;
+                }
+            }
         }
     }
 

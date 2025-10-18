@@ -68,10 +68,10 @@ export function AuthProvider({ children }) {
         }
     };
 
-    const register = async (email, password) => {
+    const register = async (email, password, firstName = null, lastName = null, timezone = 'UTC') => {
         try {
             setError(null);
-            await authApiService.register(email, password);
+            await authApiService.register(email, password, firstName, lastName, timezone);
             return await login(email, password);
         } catch (err) {
             setError(err.message);
@@ -99,6 +99,19 @@ export function AuthProvider({ children }) {
         }
     };
 
+    const updateProfile = async (updates) => {
+        try {
+            setError(null);
+            await authApiService.updateProfile(updates);
+            // Reload user data after successful update
+            await loadUser();
+            return { success: true };
+        } catch (err) {
+            setError(err.message);
+            return { success: false, error: err.message };
+        }
+    };
+
     const value = {
         user,
         loading,
@@ -106,6 +119,7 @@ export function AuthProvider({ children }) {
         login,
         register,
         logout,
+        updateProfile,
         isAuthenticated: !!user,
     };
 

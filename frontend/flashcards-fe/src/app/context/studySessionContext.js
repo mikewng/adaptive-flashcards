@@ -62,8 +62,6 @@ export function StudySessionProvider({ children }) {
                 cardsData = await studyApiService.getAllCards(parseInt(targetDeckId), cardLimit);
             }
 
-            console.log(`Found ${cardsData.length} cards for ${cardSource} mode`);
-
             // If no cards available, don't create a session
             if (!cardsData || cardsData.length === 0) {
                 setCards([]);
@@ -78,8 +76,6 @@ export function StudySessionProvider({ children }) {
             setDeckId(parseInt(targetDeckId));
             setSessionType(mode);
             setIsSessionActive(true);
-
-            console.log('Session started:', session);
 
             setCards(cardsData);
             setCurrentCardIndex(0);
@@ -126,7 +122,6 @@ export function StudySessionProvider({ children }) {
                 ...answerData
             });
 
-            console.log('Answer result:', result);
             setLastResult(result);
             setShowFeedback(true);
 
@@ -181,7 +176,6 @@ export function StudySessionProvider({ children }) {
 
         try {
             const stats = await studyApiService.endStudySession(sessionId);
-            console.log('Session ended:', stats);
             setSessionStats(stats);
             setIsSessionActive(false);
 
@@ -218,7 +212,6 @@ export function StudySessionProvider({ children }) {
      * Skip the current card (mark as seen but not answered)
      */
     const skipCard = useCallback(() => {
-        console.log('Skipping card:', cards[currentCardIndex]?.id);
         nextCard();
     }, [cards, currentCardIndex, nextCard]);
 
