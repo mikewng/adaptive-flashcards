@@ -27,6 +27,21 @@ class AuthApiService {
             method: 'GET',
         });
     }
+
+    async refreshToken(refreshToken) {
+        return apiWrapper.request('/auth/refresh', {
+            method: 'POST',
+            body: JSON.stringify({ refresh_token: refreshToken }),
+            skipAuth: true, // Don't include access token in this request
+        });
+    }
+
+    async logout(refreshToken) {
+        return apiWrapper.request('/auth/logout', {
+            method: 'POST',
+            body: JSON.stringify({ refresh_token: refreshToken }),
+        });
+    }
 }
 
 export const authApiService = new AuthApiService();

@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useEffect } from 'react';
 import { authApiService } from '../utils/authApis';
+import { useRouter } from 'next/navigation';
 
 const AuthContext = createContext(null);
 
@@ -9,15 +10,31 @@ export function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const router = useRouter();
 
     useEffect(() => {
         const token = localStorage.getItem('access_token');
-        if (token) {
+        const refreshToken = localStorage.getItem('refresh_token');
+
+        if (token && refreshToken) {
             loadUser();
         } else {
             setLoading(false);
         }
-    }, []);
+
+        // Listen for token expiration events from apiWrapper
+        const handleTokenExpired = () => {
+            setUser(null);
+            setError('Your session has expired. Please log in again.');
+            router.push('/login');
+        };
+
+        window.addEventListener('token-expired', handleTokenExpired);
+
+        return () => {
+            window.removeEventListener('token-expired', handleTokenExpired);
+        };
+    }, [router]);
 
     const loadUser = async () => {
         try {
@@ -27,6 +44,7 @@ export function AuthProvider({ children }) {
         } catch (err) {
             console.error('Failed to load user:', err);
             localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
             setUser(null);
         } finally {
             setLoading(false);
@@ -37,7 +55,11 @@ export function AuthProvider({ children }) {
         try {
             setError(null);
             const response = await authApiService.login(email, password);
+
+            // Store both tokens
             localStorage.setItem('access_token', response.access_token);
+            localStorage.setItem('refresh_token', response.refresh_token);
+
             await loadUser();
             return { success: true };
         } catch (err) {
@@ -57,10 +79,24 @@ export function AuthProvider({ children }) {
         }
     };
 
-    const logout = () => {
-        localStorage.removeItem('access_token');
-        setUser(null);
-        setError(null);
+    const logout = async () => {
+        try {
+            const refreshToken = localStorage.getItem('refresh_token');
+
+            // Call backend logout endpoint to blacklist tokens
+            if (refreshToken) {
+                await authApiService.logout(refreshToken);
+            }
+        } catch (err) {
+            console.error('Logout error:', err);
+            // Continue with local logout even if API call fails
+        } finally {
+            // Clear tokens and user state
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+            setUser(null);
+            setError(null);
+        }
     };
 
     const value = {

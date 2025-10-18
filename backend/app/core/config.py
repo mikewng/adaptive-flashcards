@@ -7,7 +7,8 @@ class Settings(BaseSettings):
 
     JWT_SECRET: str = "ENV FILE"
     JWT_ALG: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30  # 30 minutes for access tokens
+    REFRESH_TOKEN_EXPIRE_DAYS: int = 30  # 30 days for refresh tokens
 
     DATABASE_URL: str = ""
 

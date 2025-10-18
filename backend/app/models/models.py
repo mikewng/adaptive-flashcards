@@ -15,6 +15,7 @@ class User(Base):
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     decks = relationship("Deck", back_populates="owner")
+    refresh_tokens = relationship("RefreshToken", back_populates="user", cascade="all, delete-orphan")
 
 
 class Deck(Base):
@@ -143,3 +144,26 @@ class CardMetrics(Base):
     card = relationship("Card")
     session = relationship("StudySession", back_populates="metrics")
     review = relationship("Review")
+
+
+class RefreshToken(Base):
+    """Store refresh tokens for authentication"""
+    __tablename__ = "refresh_tokens"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    token = Column(String, unique=True, index=True, nullable=False)
+    expires_at = Column(DateTime, nullable=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+    user = relationship("User", back_populates="refresh_tokens")
+
+
+class TokenBlacklist(Base):
+    """Store revoked/blacklisted tokens (for logout)"""
+    __tablename__ = "token_blacklist"
+
+    id = Column(Integer, primary_key=True, index=True)
+    token = Column(String, unique=True, index=True, nullable=False)
+    blacklisted_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    expires_at = Column(DateTime, nullable=False)  # Store token expiry so we can clean up old entries
