@@ -8,7 +8,7 @@ import CardComponent from './components/CardComponent';
 import CardModal from './components/CardModal';
 import StudyDropdown from './components/StudyDropdown';
 
-const CardManagement = ({ deckId, readOnly = false }) => {
+const CardManagement = ({ deckId }) => {
     const { deck, cards, loading, error, fetchDeckAndCards, createCard, updateCard, deleteCard, updateDeck } = useDeck();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingCard, setEditingCard] = useState(null);
@@ -137,30 +137,23 @@ const CardManagement = ({ deckId, readOnly = false }) => {
             )}
             <div className="fc-cardmanagement-header">
                 <h1>{deck?.name}</h1>
-                {!readOnly && (
-                    <div className='fc-tools-container'>
-                        <div className='fc-dropdown-container'>
-                            <div className="fc-btn-container study" onClick={() => { setOpenStudyDropdown(!openStudyDropdown) }}>
-                                Study
-                            </div>
-                            {
-                                openStudyDropdown &&
-                                <StudyDropdown onStudyOptionClick={handleStudy} />
-                            }
+                <div className='fc-tools-container'>
+                    <div className='fc-dropdown-container'>
+                        <div className="fc-btn-container study" onClick={() => { setOpenStudyDropdown(!openStudyDropdown) }}>
+                            Study
                         </div>
-                        <div className="fc-btn-container add" onClick={handleAddCard}>
-                            + Add Card
-                        </div>
-                        <div className="fc-btn-container db">
-                            Dashboards
-                        </div>
+                        {
+                            openStudyDropdown &&
+                            <StudyDropdown onStudyOptionClick={handleStudy} />
+                        }
                     </div>
-                )}
-                {readOnly && (
-                    <div className='fc-readonly-badge'>
-                        Read Only - Public Deck
+                    <div className="fc-btn-container add" onClick={handleAddCard}>
+                        + Add Card
                     </div>
-                )}
+                    <div className="fc-btn-container db">
+                        Dashboards
+                    </div>
+                </div>
             </div>
 
             {
@@ -169,28 +162,26 @@ const CardManagement = ({ deckId, readOnly = false }) => {
                 )
             }
 
-            {!readOnly && (
-                <div className="fc-privacy-section">
-                    <div className="fc-privacy-status">
-                        <span className="fc-privacy-label">Privacy:</span>
-                        <span className={`fc-privacy-badge ${deck?.is_private ? 'private' : 'public'}`}>
-                            {deck?.is_private ? 'Private' : 'Public'}
-                        </span>
-                    </div>
-                    <button
-                        className="fc-privacy-toggle-btn"
-                        onClick={handleTogglePrivacy}
-                        disabled={togglingPrivacy}
-                    >
-                        {togglingPrivacy
-                            ? 'Updating...'
-                            : deck?.is_private
-                                ? 'Make Public'
-                                : 'Make Private'
-                        }
-                    </button>
+            <div className="fc-privacy-section">
+                <div className="fc-privacy-status">
+                    <span className="fc-privacy-label">Privacy:</span>
+                    <span className={`fc-privacy-badge ${deck?.is_private ? 'private' : 'public'}`}>
+                        {deck?.is_private ? '🔒 Private' : '🌐 Public'}
+                    </span>
                 </div>
-            )}
+                <button
+                    className="fc-privacy-toggle-btn"
+                    onClick={handleTogglePrivacy}
+                    disabled={togglingPrivacy}
+                >
+                    {togglingPrivacy
+                        ? 'Updating...'
+                        : deck?.is_private
+                            ? 'Make Public'
+                            : 'Make Private'
+                    }
+                </button>
+            </div>
             <div className='fc-details-container'>
                 <div className='fc-count-text'>{`Card Count: ${filteredCards?.length ?? 0} / ${cards?.length ?? 0}`}</div>
                 <div className='fc-subtools-container'>
@@ -210,14 +201,13 @@ const CardManagement = ({ deckId, readOnly = false }) => {
                         <CardComponent
                             key={card.id}
                             card={card}
-                            onEdit={readOnly ? null : handleEditCard}
-                            onDelete={readOnly ? null : handleDeleteCard}
-                            readOnly={readOnly}
+                            onEdit={handleEditCard}
+                            onDelete={handleDeleteCard}
                         />
                     ))
                 ) : (
                     <div className="fc-no-cards">
-                        <p>{searchQuery ? 'No cards match your search.' : readOnly ? 'No cards in this deck yet.' : 'No cards yet. Add your first card to get started!'}</p>
+                        <p>{searchQuery ? 'No cards match your search.' : 'No cards yet. Add your first card to get started!'}</p>
                     </div>
                 )}
             </div>

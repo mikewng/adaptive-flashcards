@@ -1,9 +1,9 @@
 'use client'
 
 import { use } from 'react';
-import CardManagement from "../../../screens/cardmanagement/CardManagement";
+import PublicDeckView from "../../../screens/publicdeckview/PublicDeckView";
 
 export default function PublicDeckViewPage({ params }) {
   const { deckId } = use(params);
-  return <CardManagement deckId={deckId} readOnly={true} />;
+  return <PublicDeckView deckId={deckId} />;
 }
