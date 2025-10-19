@@ -34,9 +34,11 @@ const Navbar = () => {
             }
             <div className="fc-navbar-content">
                 <div className="fc-navbar-brand">
-                    <svg className="fc-navbar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    </svg>
-                    <span className="fc-navbar-title">Adaptive Flashcards</span>
+                    <span className="fc-navbar-title">
+                        <Link href="/pages/decks" className="fc-nav-link" onClick={() => setMobileMenuOpen(false)}>
+                            Adaptive Flashcards
+                        </Link>
+                    </span>
                 </div>
 
                 {/* Hamburger Menu Button */}
