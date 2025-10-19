@@ -57,7 +57,7 @@ const PublicDecksView = () => {
     const fetchPublicDecks = async (search = null) => {
         try {
             setLoading(true);
-            const response = await flashcardApiService.getPublicDecks(0, 50, search);
+            const response = await flashcardApiService.getPublicDecks(0, 6, search);
             setDecks(response);
             setError(null);
         } catch (err) {
@@ -157,23 +157,25 @@ const PublicDecksView = () => {
                     </button>
                 </form>
             </div>
-
             <div className="fc-decks-list">
-                {decks.length > 0 ? (
-                    decks.map((deck) => (
-                        <PublicDeckCard
-                            key={deck.id}
-                            deck={deck}
-                            onCopy={handleCopyDeck}
-                            onClick={handleDeckClick}
-                            isAuthenticated={isAuthenticated}
-                        />
-                    ))
-                ) : (
-                    <div className="fc-no-decks">
-                        <p>No public decks found. Try a different search term.</p>
-                    </div>
-                )}
+                <div className='fc-decks-header'>Recently Published Decks</div>
+                <div className='fc-decks-container'>
+                    {decks.length > 0 ? (
+                        decks.map((deck) => (
+                            <PublicDeckCard
+                                key={deck.id}
+                                deck={deck}
+                                onCopy={handleCopyDeck}
+                                onClick={handleDeckClick}
+                                isAuthenticated={isAuthenticated}
+                            />
+                        ))
+                    ) : (
+                        <div className="fc-no-decks">
+                            <p>No public decks found. Try a different search term.</p>
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );
