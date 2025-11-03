@@ -82,18 +82,42 @@ def get_study_session(
 def get_due_cards(
     deck_id: int,
     limit: int = Query(20, ge=1, le=100, description="Maximum number of cards to return"),
-    db: Session = Depends(get_db)
+    use_ml: bool = Query(True, description="Use ML to rank cards by priority"),
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user)
 ):
-    cards = CardRepository.get_due_cards(db, deck_id, limit)
+    cards = CardRepository.get_due_cards(
+        db,
+        deck_id,
+        limit,
+        use_ml_ranking=use_ml,
+        user_id=user.id
+    )
 
-    return [
-        StudyCardResponse(
+    # Add ML predictions to response
+    response_cards = []
+    for card in cards:
+        likelihood = None
+        likelihood_label = None
+
+        if use_ml:
+            try:
+                from app.ml.inference.predictor import ml_service
+                if ml_service.is_model_loaded():
+                    likelihood = ml_service.predict_likelihood(card, db, user.id)
+                    likelihood_label = ml_service.get_likelihood_label(likelihood)
+            except Exception as e:
+                print(f"ML prediction failed for card {card.id}: {e}")
+
+        response_cards.append(StudyCardResponse(
             id=card.id,
             question=card.question,
-            answer=None
-        )
-        for card in cards
-    ]
+            answer=None,
+            likelihood_to_remember=likelihood,
+            likelihood_label=likelihood_label
+        ))
+
+    return response_cards
 
 
 @router.get("/deck/{deck_id}/new", response_model=List[StudyCardResponse])

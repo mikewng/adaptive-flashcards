@@ -36,6 +36,8 @@ class StudyCardResponse(BaseModel):
     id: int
     question: str
     answer: Optional[str] = None  # Hidden until after submission
+    likelihood_to_remember: Optional[float] = Field(None, description="ML-predicted probability of remembering (0-1)")
+    likelihood_label: Optional[str] = Field(None, description="High, Medium, or Low")
 
     class Config:
         from_attributes = True
