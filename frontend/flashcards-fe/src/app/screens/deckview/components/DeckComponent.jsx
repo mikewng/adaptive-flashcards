@@ -1,3 +1,5 @@
+import './DeckComponent.scss';
+
 const DeckComponent = ({ deck, onDeckClick, onDelete }) => {
     const handleIconClick = (e, callback) => {
         e.stopPropagation();
@@ -17,12 +19,18 @@ const DeckComponent = ({ deck, onDeckClick, onDelete }) => {
             <div className="fc-deck-header">
                 <h3 className="fc-deck-name">{deck.name}</h3>
                 <div className="fc-deck-actions">
+                    {/* <button
+                        className="fc-icon-btn"
+                        title="Edit"
+                    >
+                        <img src="/pencil-solid-full.svg" alt="Edit" className="fc-icon" />
+                    </button> */}
                     <button
                         className="fc-icon-btn"
                         onClick={(e) => handleIconClick(e, onDelete)}
                         title="Delete"
                     >
-                        Delete
+                        <img src="/trash-solid-full.svg" alt="Delete" className="fc-icon" />
                     </button>
                 </div>
             </div>
