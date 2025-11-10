@@ -22,7 +22,6 @@ export function AuthProvider({ children }) {
             setLoading(false);
         }
 
-        // Listen for token expiration events from apiWrapper
         const handleTokenExpired = () => {
             setUser(null);
             setError('Your session has expired. Please log in again.');
@@ -56,10 +55,8 @@ export function AuthProvider({ children }) {
             setError(null);
             const response = await authApiService.login(email, password);
 
-            // Store both tokens
             localStorage.setItem('access_token', response.access_token);
             localStorage.setItem('refresh_token', response.refresh_token);
-
             await loadUser();
             return { success: true };
         } catch (err) {
@@ -82,16 +79,12 @@ export function AuthProvider({ children }) {
     const logout = async () => {
         try {
             const refreshToken = localStorage.getItem('refresh_token');
-
-            // Call backend logout endpoint to blacklist tokens
             if (refreshToken) {
                 await authApiService.logout(refreshToken);
             }
         } catch (err) {
             console.error('Logout error:', err);
-            // Continue with local logout even if API call fails
         } finally {
-            // Clear tokens and user state
             localStorage.removeItem('access_token');
             localStorage.removeItem('refresh_token');
             setUser(null);
@@ -103,7 +96,6 @@ export function AuthProvider({ children }) {
         try {
             setError(null);
             await authApiService.updateProfile(updates);
-            // Reload user data after successful update
             await loadUser();
             return { success: true };
         } catch (err) {

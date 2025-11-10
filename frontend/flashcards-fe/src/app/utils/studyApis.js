@@ -49,10 +49,11 @@ class StudyApiService {
      * Get cards that are due for review
      * @param {number} deckId - The deck ID
      * @param {number} limit - Max number of cards to return
+     * @param {boolean} shuffle - Whether to shuffle the cards
      * @returns {Promise} Array of cards with questions (answers hidden)
      */
-    async getDueCards(deckId, limit = 20) {
-        return apiWrapper.request(`/study/deck/${deckId}/due?limit=${limit}`, {
+    async getDueCards(deckId, limit = 20, shuffle = false) {
+        return apiWrapper.request(`/study/deck/${deckId}/due?limit=${limit}&shuffle=${shuffle}`, {
             method: 'GET',
         });
     }
@@ -61,10 +62,11 @@ class StudyApiService {
      * Get new cards (never studied before)
      * @param {number} deckId - The deck ID
      * @param {number} limit - Max number of cards to return
+     * @param {boolean} shuffle - Whether to shuffle the cards
      * @returns {Promise} Array of new cards
      */
-    async getNewCards(deckId, limit = 20) {
-        return apiWrapper.request(`/study/deck/${deckId}/new?limit=${limit}`, {
+    async getNewCards(deckId, limit = 20, shuffle = false) {
+        return apiWrapper.request(`/study/deck/${deckId}/new?limit=${limit}&shuffle=${shuffle}`, {
             method: 'GET',
         });
     }
@@ -73,10 +75,11 @@ class StudyApiService {
      * Get all cards (for practice mode)
      * @param {number} deckId - The deck ID
      * @param {number} limit - Max number of cards to return
+     * @param {boolean} shuffle - Whether to shuffle the cards
      * @returns {Promise} Array of all cards
      */
-    async getAllCards(deckId, limit = 50) {
-        return apiWrapper.request(`/study/deck/${deckId}/all?limit=${limit}`, {
+    async getAllCards(deckId, limit = 50, shuffle = false) {
+        return apiWrapper.request(`/study/deck/${deckId}/all?limit=${limit}&shuffle=${shuffle}`, {
             method: 'GET',
         });
     }

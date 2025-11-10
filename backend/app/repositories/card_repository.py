@@ -3,6 +3,7 @@ Repository for card-related database operations.
 """
 from datetime import datetime, timezone
 from typing import List
+import random
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from app.models.models import Card
@@ -12,7 +13,7 @@ class CardRepository:
     """Handles database queries for cards."""
 
     @staticmethod
-    def get_due_cards(db: Session, deck_id: int, limit: int) -> List[Card]:
+    def get_due_cards(db: Session, deck_id: int, limit: int, shuffle: bool = False) -> List[Card]:
         """
         Get cards that are due for review in a specific deck.
 
@@ -20,9 +21,10 @@ class CardRepository:
             db: Database session
             deck_id: ID of the deck
             limit: Maximum number of cards to return
+            shuffle: Whether to shuffle the cards randomly
 
         Returns:
-            List of due cards, ordered by due date
+            List of due cards, ordered by due date (or shuffled if shuffle=True)
         """
         stmt = (
             select(Card)
@@ -34,10 +36,15 @@ class CardRepository:
             .order_by(Card.due_date.asc())
             .limit(limit)
         )
-        return list(db.scalars(stmt).all())
+        cards = list(db.scalars(stmt).all())
+
+        if shuffle:
+            random.shuffle(cards)
+
+        return cards
 
     @staticmethod
-    def get_new_cards(db: Session, deck_id: int, limit: int) -> List[Card]:
+    def get_new_cards(db: Session, deck_id: int, limit: int, shuffle: bool = False) -> List[Card]:
         """
         Get new cards (never reviewed) from a specific deck.
 
@@ -45,9 +52,10 @@ class CardRepository:
             db: Database session
             deck_id: ID of the deck
             limit: Maximum number of cards to return
+            shuffle: Whether to shuffle the cards randomly
 
         Returns:
-            List of new cards, ordered by creation date
+            List of new cards, ordered by creation date (or shuffled if shuffle=True)
         """
         stmt = (
             select(Card)
@@ -59,10 +67,15 @@ class CardRepository:
             .order_by(Card.created_at.asc())
             .limit(limit)
         )
-        return list(db.scalars(stmt).all())
+        cards = list(db.scalars(stmt).all())
+
+        if shuffle:
+            random.shuffle(cards)
+
+        return cards
 
     @staticmethod
-    def get_all_cards(db: Session, deck_id: int, limit: int) -> List[Card]:
+    def get_all_cards(db: Session, deck_id: int, limit: int, shuffle: bool = False) -> List[Card]:
         """
         Get all cards from a specific deck.
 
@@ -70,9 +83,10 @@ class CardRepository:
             db: Database session
             deck_id: ID of the deck
             limit: Maximum number of cards to return
+            shuffle: Whether to shuffle the cards randomly
 
         Returns:
-            List of all cards, ordered by creation date (newest first)
+            List of all cards, ordered by creation date (newest first, or shuffled if shuffle=True)
         """
         stmt = (
             select(Card)
@@ -83,4 +97,9 @@ class CardRepository:
             .order_by(Card.created_at.desc())
             .limit(limit)
         )
-        return list(db.scalars(stmt).all())
+        cards = list(db.scalars(stmt).all())
+
+        if shuffle:
+            random.shuffle(cards)
+
+        return cards

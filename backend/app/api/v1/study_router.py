@@ -82,9 +82,10 @@ def get_study_session(
 def get_due_cards(
     deck_id: int,
     limit: int = Query(20, ge=1, le=100, description="Maximum number of cards to return"),
+    shuffle: bool = Query(False, description="Whether to shuffle the cards randomly"),
     db: Session = Depends(get_db)
 ):
-    cards = CardRepository.get_due_cards(db, deck_id, limit)
+    cards = CardRepository.get_due_cards(db, deck_id, limit, shuffle)
 
     return [
         StudyCardResponse(
@@ -100,9 +101,10 @@ def get_due_cards(
 def get_new_cards(
     deck_id: int,
     limit: int = Query(20, ge=1, le=100, description="Maximum number of cards to return"),
+    shuffle: bool = Query(False, description="Whether to shuffle the cards randomly"),
     db: Session = Depends(get_db)
 ):
-    cards = CardRepository.get_new_cards(db, deck_id, limit)
+    cards = CardRepository.get_new_cards(db, deck_id, limit, shuffle)
 
     return [
         StudyCardResponse(
@@ -118,9 +120,10 @@ def get_new_cards(
 def get_all_cards(
     deck_id: int,
     limit: int = Query(50, ge=1, le=200, description="Maximum number of cards to return"),
+    shuffle: bool = Query(False, description="Whether to shuffle the cards randomly"),
     db: Session = Depends(get_db)
 ):
-    cards = CardRepository.get_all_cards(db, deck_id, limit)
+    cards = CardRepository.get_all_cards(db, deck_id, limit, shuffle)
 
     return [
         StudyCardResponse(

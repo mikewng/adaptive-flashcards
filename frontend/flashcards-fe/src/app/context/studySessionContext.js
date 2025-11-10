@@ -41,8 +41,9 @@ export function StudySessionProvider({ children }) {
      * @param {string} mode - Session type ('writing' or 'multiple_choice')
      * @param {string} cardSource - 'due' | 'new' | 'all'
      * @param {number} cardLimit - Max number of cards to load
+     * @param {boolean} shuffle - Whether to shuffle the cards
      */
-    const startSession = useCallback(async (targetDeckId, mode = 'writing', cardSource = 'due', cardLimit = 20) => {
+    const startSession = useCallback(async (targetDeckId, mode = 'writing', cardSource = 'due', cardLimit = 20, shuffle = false) => {
         if (!targetDeckId) {
             setError('Please select a deck');
             return;
@@ -55,11 +56,11 @@ export function StudySessionProvider({ children }) {
             // First, check if there are cards available BEFORE creating a session
             let cardsData;
             if (cardSource === 'due') {
-                cardsData = await studyApiService.getDueCards(parseInt(targetDeckId), cardLimit);
+                cardsData = await studyApiService.getDueCards(parseInt(targetDeckId), cardLimit, shuffle);
             } else if (cardSource === 'new') {
-                cardsData = await studyApiService.getNewCards(parseInt(targetDeckId), cardLimit);
+                cardsData = await studyApiService.getNewCards(parseInt(targetDeckId), cardLimit, shuffle);
             } else {
-                cardsData = await studyApiService.getAllCards(parseInt(targetDeckId), cardLimit);
+                cardsData = await studyApiService.getAllCards(parseInt(targetDeckId), cardLimit, shuffle);
             }
 
             // If no cards available, don't create a session

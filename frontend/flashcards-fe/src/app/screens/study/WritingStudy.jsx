@@ -33,7 +33,6 @@ const WritingStudy = ({ deckId }) => {
     const router = useRouter();
     const feedbackRef = useRef(null);
 
-    // Start session when component mounts
     useEffect(() => {
         if (deckId && !sessionId && !sessionStats) {
             handleStartSession();
@@ -49,7 +48,7 @@ const WritingStudy = ({ deckId }) => {
 
     const handleStartSession = async () => {
         try {
-            await startSession(parseInt(deckId), 'writing', 'due', 20);
+            await startSession(parseInt(deckId), 'writing', 'due', 20, true);
         } catch (err) {
             console.error('Failed to start writing session:', err);
         }

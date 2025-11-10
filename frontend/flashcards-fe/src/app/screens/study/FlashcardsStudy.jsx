@@ -14,9 +14,11 @@ import StudyFlashCard from './components/StudyFlashCard';
 const FlashcardsStudy = ({ deckId }) => {
     const [deck, setDeck] = useState(null);
     const [cards, setCards] = useState([]);
+    const [originalCards, setOriginalCards] = useState([]); // Store original order
     const [currentCardIndex, setCurrentCardIndex] = useState(0);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [shuffleEnabled, setShuffleEnabled] = useState(true); // Default to shuffled
 
     const router = useRouter();
 
@@ -34,7 +36,11 @@ const FlashcardsStudy = ({ deckId }) => {
                 flashcardApiService.getCardsByDeckId(deckId)
             ]);
             setDeck(deckData);
-            setCards(cardsData);
+            setOriginalCards(cardsData);
+
+            // Shuffle by default
+            const shuffledCards = [...cardsData].sort(() => Math.random() - 0.5);
+            setCards(shuffledCards);
             setError(null);
         } catch (err) {
             console.error('Error fetching deck and cards:', err);
@@ -46,6 +52,20 @@ const FlashcardsStudy = ({ deckId }) => {
 
     const handleBackToCards = () => {
         router.push(`/pages/decks/${deckId}`);
+    };
+
+    const handleToggleShuffle = () => {
+        setShuffleEnabled(!shuffleEnabled);
+        setCurrentCardIndex(0); // Reset to first card
+
+        if (!shuffleEnabled) {
+            // Turning shuffle ON - shuffle the cards
+            const shuffledCards = [...originalCards].sort(() => Math.random() - 0.5);
+            setCards(shuffledCards);
+        } else {
+            // Turning shuffle OFF - restore original order
+            setCards([...originalCards]);
+        }
     };
 
     const handleNext = () => {
@@ -105,6 +125,13 @@ const FlashcardsStudy = ({ deckId }) => {
             </div>
 
             <div className="fc-study-content">
+                <button
+                    onClick={handleToggleShuffle}
+                    className={`fc-shuffle-toggle ${shuffleEnabled ? 'active' : ''}`}
+                    title={shuffleEnabled ? 'Shuffle is ON' : 'Shuffle is OFF'}
+                >
+                    {shuffleEnabled ? 'Shuffled' : 'Original Order'}
+                </button>
                 <StudyFlashCard card={currentCard} />
             </div>
 
@@ -129,6 +156,7 @@ const FlashcardsStudy = ({ deckId }) => {
                 >
                     Next
                 </button>
+
             </div>
         </div>
     );
