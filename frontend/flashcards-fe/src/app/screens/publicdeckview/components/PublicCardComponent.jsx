@@ -1,16 +1,11 @@
-import "../../cardmanagement/components/CardComponent.scss";
+import './PublicCardComponent.scss';
 
-const PublicCardComponent = ({ card }) => {
+const PublicCardComponent = ({ card, index }) => {
     return (
-        <div className={`fc-card-item`}>
-            <div className="fc-card-content">
-                <div className="fc-card-section">
-                    <p className="fc-card-text">{card.question}</p>
-                </div>
-                <div className="fc-card-section">
-                    <p className="fc-card-text">{card.answer}</p>
-                </div>
-            </div>
+        <div className="pcc-row">
+            <div className="pcc-num">{String((index ?? 0) + 1).padStart(2, '0')}</div>
+            <div className="pcc-front">{card.question}</div>
+            <div className="pcc-back">{card.answer}</div>
         </div>
     );
 };

@@ -4,9 +4,30 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { flashcardApiService } from '../../utils/flashcardApis';
 import { useAuth } from '../../context/userAuthContext';
-import '../cardmanagement/CardManagement.scss';
+import './PublicDeckView.scss';
 import PublicCardComponent from './components/PublicCardComponent';
 import ModalComponent from '../../components/ModalComponent';
+
+const ArrowLeftIcon = () => (
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M9.5 4L5 8l4.5 4M5.5 8h8" />
+    </svg>
+);
+const CopyIcon = () => (
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M5 5V2.5h8.5V11H11M2.5 5H11v8.5H2.5z" />
+    </svg>
+);
+const ArrowRightIcon = () => (
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M6.5 4l4.5 4-4.5 4M3 8h8" />
+    </svg>
+);
+const SearchIcon = () => (
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M11.5 11.5l3 3M7 12.5a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11z" />
+    </svg>
+);
 
 const PublicDeckView = ({ deckId }) => {
     const [deck, setDeck] = useState(null);
@@ -20,18 +41,16 @@ const PublicDeckView = ({ deckId }) => {
     const router = useRouter();
 
     useEffect(() => {
-        if (deckId) {
-            fetchDeckAndCards(deckId);
-        }
+        if (deckId) fetchDeckAndCards(deckId);
     }, [deckId]);
 
-    const fetchDeckAndCards = async (deckId) => {
+    const fetchDeckAndCards = async (id) => {
         try {
             setLoading(true);
             setError(null);
             const [deckData, cardsData] = await Promise.all([
-                flashcardApiService.getDeckById(deckId),
-                flashcardApiService.getCardsByDeckId(deckId)
+                flashcardApiService.getDeckById(id),
+                flashcardApiService.getCardsByDeckId(id)
             ]);
             setDeck(deckData);
             setCards(cardsData);
@@ -45,127 +64,143 @@ const PublicDeckView = ({ deckId }) => {
 
     const handleCopyDeck = async () => {
         if (!isAuthenticated) {
-            alert('Please sign in to copy this deck');
             router.push('/pages/login');
             return;
         }
-
         try {
-            const copiedDeckData = await flashcardApiService.copyDeck(deckId);
-            setCopiedDeck(copiedDeckData);
+            const copied = await flashcardApiService.copyDeck(deckId);
+            setCopiedDeck(copied);
             setCopyModalOpen(true);
-        } catch (err) {
-            console.error('Error copying deck:', err);
+        } catch {
             alert('Failed to copy deck. Please try again.');
         }
     };
 
-    const handleGoToCopiedDeck = () => {
-        if (copiedDeck) {
-            router.push(`/pages/decks/${copiedDeck.id}`);
-        }
-    };
-
-    const handleBackToPublicDecks = () => {
-        router.push('/pages/public-decks');
-    };
-
     const filteredCards = cards.filter(card => {
         if (!searchQuery.trim()) return true;
-        const query = searchQuery.toLowerCase();
-        return (
-            card.question?.toLowerCase().includes(query) ||
-            card.answer?.toLowerCase().includes(query)
-        );
+        const q = searchQuery.toLowerCase();
+        return card.question?.toLowerCase().includes(q) || card.answer?.toLowerCase().includes(q);
     });
 
     if (loading) {
         return (
-            <div className="fc-cardmanagement-wrapper">
-                <div className="fc-loading">Loading deck...</div>
+            <div className="pdv-wrapper">
+                <div className="pdv-state">Loading deck…</div>
             </div>
         );
     }
 
     if (error) {
         return (
-            <div className="fc-cardmanagement-wrapper">
-                <div className="fc-error">{error}</div>
-                <button onClick={handleBackToPublicDecks} className="fc-back-btn">
-                    Back to Public Decks
+            <div className="pdv-wrapper">
+                <div className="pdv-state pdv-state-error">{error}</div>
+                <button className="pdv-back-btn" onClick={() => router.push('/pages/public-decks')}>
+                    <ArrowLeftIcon /> Back to Discover
                 </button>
             </div>
         );
     }
 
     return (
-        <div className="fc-cardmanagement-wrapper">
+        <div className="pdv-wrapper">
             {copyModalOpen && (
                 <ModalComponent
-                    title="Deck Copied Successfully!"
+                    title="Deck copied!"
                     onClose={() => setCopyModalOpen(false)}
                     isOpen={copyModalOpen}
                 >
-                    <p>The deck has been copied to your library. All cards have been reset for fresh learning.</p>
-                    <div style={{ display: 'flex', gap: '10px', marginTop: '20px', justifyContent: 'flex-end' }}>
-                        <button onClick={() => setCopyModalOpen(false)} style={{ padding: '8px 16px' }}>
-                            Close
-                        </button>
+                    <p style={{ color: 'var(--ink-soft)', margin: '0 0 20px' }}>
+                        Added to your library. All cards have been reset for fresh learning.
+                    </p>
+                    <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
+                        <button className="pdv-modal-btn" onClick={() => setCopyModalOpen(false)}>Close</button>
                         <button
-                            onClick={handleGoToCopiedDeck}
-                            style={{ padding: '8px 16px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                            className="pdv-modal-btn primary"
+                            onClick={() => copiedDeck && router.push(`/pages/decks/${copiedDeck.id}`)}
                         >
-                            Go to My Deck
+                            Go to My Deck <ArrowRightIcon />
                         </button>
                     </div>
                 </ModalComponent>
             )}
 
-            <div className="fc-cardmanagement-header">
-                <h1>{deck?.name}</h1>
-                <div className='fc-tools-container'>
-                    <div onClick={handleBackToPublicDecks} className="fc-btn-container">
-                        ← Back
+            {/* Back link */}
+            <button className="pdv-back-btn" onClick={() => router.push('/pages/public-decks')}>
+                <ArrowLeftIcon /> Discover
+            </button>
+
+            {/* Hero */}
+            <div className="pdv-hero">
+                <div className="pdv-hero-main">
+                    <div className="pdv-deck-tag">
+                        <span className="pdv-dot" /> Public deck
                     </div>
-                    <div onClick={handleCopyDeck} className="fc-btn-container copy">
-                        Copy to My Decks
+                    <h1 className="pdv-title">{deck?.name}</h1>
+                    {deck?.description && (
+                        <p className="pdv-description">{deck.description}</p>
+                    )}
+                    <div className="pdv-notice">
+                        Read-only view — copy this deck to your library to study and edit cards.
                     </div>
+                    {isAuthenticated && (
+                        <div className="pdv-actions">
+                            <button className="pdv-btn pdv-btn-primary pdv-btn-lg" onClick={handleCopyDeck}>
+                                <CopyIcon /> Save to My Decks
+                            </button>
+                        </div>
+                    )}
+                </div>
+
+                <div className="pdv-aside">
+                    <h3>Deck info</h3>
+                    <div className="pdv-aside-stats">
+                        <div className="pdv-aside-row">
+                            <span>Total cards</span>
+                            <span>{cards.length}</span>
+                        </div>
+                        <div className="pdv-aside-row">
+                            <span>Showing</span>
+                            <span>{filteredCards.length}</span>
+                        </div>
+                        <div className="pdv-aside-row">
+                            <span>Visibility</span>
+                            <span>Public</span>
+                        </div>
+                    </div>
+                    {!isAuthenticated && (
+                        <button
+                            className="pdv-btn pdv-btn-primary"
+                            style={{ width: '100%', marginTop: 16 }}
+                            onClick={() => router.push('/pages/login')}
+                        >
+                            Sign in to save
+                        </button>
+                    )}
                 </div>
             </div>
 
-            {deck?.description && (
-                <p className="fc-deck-description">{deck.description}</p>
-            )}
-
-            <div className="fc-privacy-section">
-                <div className="fc-privacy-status">
-                    This deck is public and is read-only. To study and modify this deck, copy it to add to your decks.
-                </div>
-            </div>
-
-            <div className='fc-details-container'>
-                <div className='fc-count-text'>{`Card Count: ${filteredCards?.length ?? 0} / ${cards?.length ?? 0}`}</div>
-                <div className='fc-subtools-container'>
+            {/* Card list header */}
+            <div className="pdv-section-head">
+                <h2>All cards</h2>
+                <div className="pdv-search-wrap">
+                    <SearchIcon />
                     <input
-                        className='fc-search-filter'
-                        placeholder='Search cards...'
+                        placeholder="Search cards…"
                         value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
+                        onChange={e => setSearchQuery(e.target.value)}
                     />
-                    <div className='fc-filter-container'>Sort By...</div>
                 </div>
             </div>
-            <div className="fc-card-list">
+
+            {/* Cards */}
+            <div className="pdv-card-list">
                 {filteredCards.length > 0 ? (
-                    filteredCards.map((card) => (
-                        <PublicCardComponent
-                            key={card.id}
-                            card={card}
-                        />
+                    filteredCards.map((card, i) => (
+                        <PublicCardComponent key={card.id} card={card} index={i} />
                     ))
                 ) : (
-                    <div className="fc-no-cards">
-                        <p>{searchQuery ? 'No cards match your search.' : 'No cards in this deck yet.'}</p>
+                    <div className="pdv-no-cards">
+                        {searchQuery ? 'No cards match your search.' : 'No cards in this deck yet.'}
                     </div>
                 )}
             </div>

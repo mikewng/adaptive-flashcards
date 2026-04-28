@@ -22,7 +22,7 @@ const ModalComponent = ({ title, children, onClose, isOpen = true }) => {
                         </svg>
                     </button>
                 </div>
-                <div className="fc-modal-content">
+                <div className="fc-modal-body">
                     {children}
                 </div>
             </div>

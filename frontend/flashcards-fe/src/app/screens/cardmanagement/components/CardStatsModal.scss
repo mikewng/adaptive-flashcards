@@ -1,297 +1,225 @@
-.fc-card-stats-modal {
-    padding: 0;
-    min-width: 500px;
-    max-width: 600px;
+.csm-body {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-width: 0;
+}
 
-    .fc-stats-loading,
-    .fc-stats-error {
-        padding: 2rem;
-        text-align: center;
-        color: #666;
+/* Loading */
+.csm-loading {
+    text-align: center;
+    padding: 2rem;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 13px;
+    color: var(--ink-faint);
+}
+
+/* Question preview */
+.csm-question {
+    font-family: "Newsreader", Georgia, serif;
+    font-size: 18px;
+    font-weight: 500;
+    font-style: italic;
+    letter-spacing: -0.005em;
+    color: var(--ink);
+    line-height: 1.4;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--rule-soft);
+}
+
+/* Metrics strip */
+.csm-metrics {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+.csm-metric {
+    background: var(--bg-elev);
+    padding: 16px 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    text-align: center;
+}
+
+.csm-metric-value {
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 1;
+    color: var(--ink);
+
+    &.serif {
+        font-family: "Newsreader", Georgia, serif;
+        letter-spacing: -0.01em;
     }
 
-    .fc-stats-error {
-        color: #dc3545;
-    }
-
-    /* Hero Section - Core Performance */
-    .fc-stats-hero {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 2rem;
-        border-radius: 8px 8px 0 0;
-        margin: -1rem -1rem 1.5rem -1rem;
-
-        .fc-stats-card-info {
-            margin-bottom: 1.5rem;
-
-            .fc-stats-question {
-                font-size: 0.95rem;
-                opacity: 0.95;
-                margin: 0;
-                font-weight: 500;
-            }
-        }
-
-        .fc-stats-accuracy {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 1.5rem;
-
-            .fc-stats-badge {
-                background: rgba(255, 255, 255, 0.2);
-                backdrop-filter: blur(10px);
-                border-radius: 12px;
-                padding: 1.5rem 2.5rem;
-                text-align: center;
-                border: 2px solid rgba(255, 255, 255, 0.3);
-
-                .fc-stats-percentage {
-                    display: block;
-                    font-size: 3rem;
-                    font-weight: bold;
-                    line-height: 1;
-                    margin-bottom: 0.5rem;
-                }
-
-                .fc-stats-difficulty {
-                    display: block;
-                    font-size: 0.85rem;
-                    letter-spacing: 2px;
-                    font-weight: 600;
-                    opacity: 0.9;
-                }
-
-                &.easy {
-                    border-color: rgba(74, 222, 128, 0.5);
-                    background: rgba(74, 222, 128, 0.2);
-                }
-
-                &.medium {
-                    border-color: rgba(251, 191, 36, 0.5);
-                    background: rgba(251, 191, 36, 0.2);
-                }
-
-                &.hard {
-                    border-color: rgba(248, 113, 113, 0.5);
-                    background: rgba(248, 113, 113, 0.2);
-                }
-            }
-        }
-
-        .fc-stats-summary {
-            display: flex;
-            justify-content: center;
-            gap: 3rem;
-
-            .fc-stats-item {
-                text-align: center;
-
-                .fc-stats-value {
-                    display: block;
-                    font-size: 1.5rem;
-                    font-weight: bold;
-                    margin-bottom: 0.25rem;
-                }
-
-                .fc-stats-label {
-                    display: block;
-                    font-size: 0.75rem;
-                    opacity: 0.8;
-                    text-transform: uppercase;
-                    letter-spacing: 1px;
-                }
-
-                &.fc-trend-improving .fc-stats-value {
-                    color: #4ade80;
-                }
-
-                &.fc-trend-declining .fc-stats-value {
-                    color: #f87171;
-                }
-
-                &.fc-trend-stable .fc-stats-value {
-                    color: rgba(255, 255, 255, 0.9);
-                }
-            }
-        }
-    }
-
-    /* Section Styling */
-    .fc-stats-section {
-        margin-bottom: 2rem;
-        padding: 0 1rem;
-
-        .fc-stats-section-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            color: #333;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid #e5e7eb;
-        }
-
-        .fc-stats-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
-
-            .fc-stats-box {
-                display: flex;
-                align-items: center;
-                gap: 0.75rem;
-                padding: 1rem;
-                background: #f9fafb;
-                border-radius: 8px;
-                border: 1px solid #e5e7eb;
-                transition: all 0.2s ease;
-
-                &:hover {
-                    background: #f3f4f6;
-                    border-color: #d1d5db;
-                    transform: translateY(-2px);
-                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-                }
-
-                .fc-stats-icon {
-                    font-size: 1.5rem;
-                }
-
-                .fc-stats-box-content {
-                    display: flex;
-                    flex-direction: column;
-                    flex: 1;
-
-                    .fc-stats-box-label {
-                        font-size: 0.75rem;
-                        color: #6b7280;
-                        margin-bottom: 0.25rem;
-                    }
-
-                    .fc-stats-box-value {
-                        font-size: 1rem;
-                        font-weight: 600;
-                        color: #111827;
-                    }
-                }
-            }
-        }
-
-        /* Recent Attempts History */
-        .fc-stats-history {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-
-            .fc-stats-attempt {
-                display: grid;
-                grid-template-columns: 100px 40px 80px 100px 80px;
-                align-items: center;
-                padding: 0.75rem 1rem;
-                background: #f9fafb;
-                border-radius: 6px;
-                border: 1px solid #e5e7eb;
-                font-size: 0.85rem;
-                transition: background 0.2s ease;
-
-                &:hover {
-                    background: #f3f4f6;
-                }
-
-                .fc-attempt-date {
-                    color: #6b7280;
-                    font-weight: 500;
-                }
-
-                .fc-attempt-result {
-                    font-size: 1.2rem;
-                    text-align: center;
-                    font-weight: bold;
-
-                    &.correct {
-                        color: #22c55e;
-                    }
-
-                    &.incorrect {
-                        color: #ef4444;
-                    }
-                }
-
-                .fc-attempt-time {
-                    color: #4b5563;
-                    font-weight: 500;
-                }
-
-                .fc-attempt-similarity {
-                    color: #6366f1;
-                    font-size: 0.8rem;
-                }
-
-                .fc-attempt-mode {
-                    color: #9ca3af;
-                    font-size: 0.75rem;
-                    text-align: right;
-                }
-            }
-        }
-
-        .fc-stats-empty {
-            text-align: center;
-            padding: 2rem;
-            color: #9ca3af;
-            background: #f9fafb;
-            border-radius: 8px;
-            border: 1px dashed #d1d5db;
-
-            p {
-                margin: 0;
-            }
-        }
-    }
-
-    /* MVP Note */
-    .fc-stats-mvp-note {
-        margin-top: 1.5rem;
-        padding: 1rem;
-        background: #fef3c7;
-        border: 1px solid #fde68a;
-        border-radius: 6px;
-        text-align: center;
-
-        small {
-            color: #92400e;
-            font-size: 0.8rem;
-        }
+    span {
+        font-size: 14px;
+        color: var(--ink-faint);
+        margin-left: 1px;
     }
 }
 
-/* Responsive Design */
-@media (max-width: 640px) {
-    .fc-card-stats-modal {
-        min-width: 100%;
+.csm-metric-label {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-faint);
+    font-weight: 600;
+}
 
-        .fc-stats-hero {
-            .fc-stats-summary {
-                gap: 1.5rem;
-            }
-        }
+/* Trend colors */
+.csm-trend-up   .csm-metric-value { color: var(--good); }
+.csm-trend-down .csm-metric-value { color: oklch(0.55 0.15 25); }
+.csm-trend-stable .csm-metric-value { color: var(--ink-faint); }
 
-        .fc-stats-section {
-            .fc-stats-grid {
-                grid-template-columns: 1fr;
-            }
+/* Status badge */
+.csm-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    font-family: "JetBrains Mono", monospace;
+    letter-spacing: 0.05em;
+}
 
-            .fc-stats-history {
-                .fc-stats-attempt {
-                    grid-template-columns: 1fr;
-                    gap: 0.5rem;
-                    text-align: left;
+.csm-badge-mastered  { background: var(--good-soft);            color: var(--good); }
+.csm-badge-learning  { background: oklch(0.95 0.05 70);         color: var(--warn); }
+.csm-badge-struggling{ background: var(--accent-soft);          color: var(--accent-ink); }
+.csm-badge-new       { background: var(--bg-sunk);              color: var(--ink-faint); }
 
-                    .fc-attempt-mode {
-                        text-align: left;
-                    }
-                }
-            }
-        }
+/* Section headings */
+.csm-section-head {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--ink-faint);
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--rule-soft);
+    margin-bottom: -8px;
+}
+
+/* Detail rows */
+.csm-detail-list {
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-sunk);
+    border: 1px solid var(--rule-soft);
+    border-radius: var(--r-md);
+    overflow: hidden;
+}
+
+.csm-detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--rule-soft);
+    font-size: 13.5px;
+
+    &:last-child { border-bottom: 0; }
+
+    span:first-child {
+        color: var(--ink-faint);
+    }
+
+    span:last-child {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 12.5px;
+        color: var(--ink);
+        font-weight: 500;
+    }
+}
+
+/* Attempts list */
+.csm-attempts {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.csm-attempt-row {
+    display: grid;
+    grid-template-columns: 90px 28px 64px 1fr 60px;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 14px;
+    background: var(--bg-elev);
+    border: 1px solid var(--rule-soft);
+    border-radius: var(--r-sm);
+    font-size: 12.5px;
+    transition: background 100ms;
+
+    &:hover { background: var(--bg-sunk); }
+}
+
+.csm-attempt-date {
+    color: var(--ink-soft);
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+}
+
+.csm-attempt-result {
+    font-size: 14px;
+    font-weight: 700;
+    text-align: center;
+
+    &.correct   { color: var(--good); }
+    &.incorrect { color: oklch(0.55 0.15 25); }
+}
+
+.csm-attempt-time {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    color: var(--ink-faint);
+}
+
+.csm-attempt-sim {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    color: var(--accent-ink);
+}
+
+.csm-attempt-mode {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    color: var(--ink-faint);
+    text-align: right;
+    text-transform: lowercase;
+}
+
+/* Empty */
+.csm-empty {
+    text-align: center;
+    padding: 24px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12px;
+    color: var(--ink-faint);
+    background: var(--bg-sunk);
+    border: 1px dashed var(--rule);
+    border-radius: var(--r-md);
+}
+
+/* Responsive */
+@media (max-width: 520px) {
+    .csm-metrics {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .csm-attempt-row {
+        grid-template-columns: 70px 24px 54px 1fr;
+
+        .csm-attempt-mode { display: none; }
     }
 }

@@ -102,9 +102,8 @@ const ProfileSettings = () => {
 
     return (
         <div className="profile-settings-container">
-            <div className="profile-settings-card">
-                <h1 className="profile-title">Profile Settings</h1>
-                <p className="profile-subtitle">Update your personal information</p>
+                <h1 className="profile-title">Your <em>profile</em></h1>
+                <p className="profile-subtitle">personal information · preferences</p>
 
                 <form onSubmit={handleSubmit} className="profile-form">
                     <div className="form-section">
@@ -232,7 +231,6 @@ const ProfileSettings = () => {
                         </div>
                     </div>
                 </div>
-            </div>
         </div>
     );
 };

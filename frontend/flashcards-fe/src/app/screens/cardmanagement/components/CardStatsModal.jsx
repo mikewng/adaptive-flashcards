@@ -7,15 +7,11 @@ import { useAuth } from '../../../context/userAuthContext';
 import { formatDateInTimezone, getDaysUntilDue } from '../../../utils/dateFormatter';
 import './CardStatsModal.scss';
 
-const getDifficultyClass = (accuracyRate) => {
-    const ranges = [
-        { max: Infinity, min: 71, class: "easy", label: "EASY" },
-        { max: 70, min: 40, class: "medium", label: "MEDIUM" },
-        { max: 39, min: 0, class: "hard", label: "HARD" }
-    ];
-
-    const range = ranges.find(r => accuracyRate >= r.min && accuracyRate <= r.max);
-    return range || { class: "none", label: "NEW" };
+const getDifficultyInfo = (accuracyRate, timesSeen) => {
+    if (!timesSeen || timesSeen === 0) return { label: 'New', cls: 'new' };
+    if (accuracyRate >= 75) return { label: 'Mastered', cls: 'mastered' };
+    if (accuracyRate >= 40) return { label: 'Learning', cls: 'learning' };
+    return { label: 'Struggling', cls: 'struggling' };
 };
 
 const CardStatsModal = ({ card, isOpen, onClose }) => {
@@ -23,197 +19,142 @@ const CardStatsModal = ({ card, isOpen, onClose }) => {
     const userTimezone = user?.timezone || 'UTC';
     const [analytics, setAnalytics] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
 
     useEffect(() => {
-        const fetchAnalytics = async () => {
-            if (!card?.id) return;
-
-            setLoading(true);
-            setError(null);
-
-            try {
-                // Try to fetch real analytics from backend
-                const data = await studyApiService.getCardAnalytics(card.id);
-                setAnalytics(data);
-            } catch (err) {
-                console.error('Failed to fetch card analytics:', err);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        if (isOpen) {
-            fetchAnalytics();
-        }
+        if (!isOpen || !card?.id) return;
+        setLoading(true);
+        studyApiService.getCardAnalytics(card.id)
+            .then(data => setAnalytics(data))
+            .catch(() => {})
+            .finally(() => setLoading(false));
     }, [card?.id, isOpen]);
 
     if (!card) return null;
 
-    // Calculate metrics from card data and analytics
     const accuracyRate = card.accuracy_rate || 0;
-    const difficulty = getDifficultyClass(accuracyRate);
+    const difficulty = getDifficultyInfo(accuracyRate, card.times_seen);
 
-    // Mock data for MVP - replace with actual analytics data when backend is ready
     const timesReviewed = analytics?.total_reviews || 0;
-    const timesCorrect = analytics?.correct_reviews || 0;
+    const timesCorrect  = analytics?.correct_reviews || 0;
     const avgResponseTime = analytics?.avg_response_time || 0;
-    const recentAttempts = analytics?.recent_attempts || [];
+    const recentAttempts  = analytics?.recent_attempts || [];
 
-    // Calculate trend
-    const getTrend = () => {
-        if (!analytics?.accuracy_trend) return { arrow: '→', label: 'Stable', class: 'stable' };
+    const trend = (() => {
+        if (!analytics?.accuracy_trend) return { symbol: '→', label: 'Stable', cls: 'stable' };
+        if (analytics.accuracy_trend > 5)  return { symbol: '↑', label: 'Improving', cls: 'up' };
+        if (analytics.accuracy_trend < -5) return { symbol: '↓', label: 'Declining', cls: 'down' };
+        return { symbol: '→', label: 'Stable', cls: 'stable' };
+    })();
 
-        if (analytics.accuracy_trend > 5) return { arrow: '↑', label: 'Improving', class: 'improving' };
-        if (analytics.accuracy_trend < -5) return { arrow: '↓', label: 'Declining', class: 'declining' };
-        return { arrow: '→', label: 'Stable', class: 'stable' };
+    const formatDueLabel = (date) => {
+        if (!date) return '—';
+        const days = getDaysUntilDue(date);
+        if (days === null) return '—';
+        if (days < 0) return `Overdue by ${Math.abs(days)}d`;
+        if (days === 0) return 'Due today';
+        if (days === 1) return 'Due tomorrow';
+        return `In ${days} days`;
     };
 
-    const trend = getTrend();
-
-    // Format due date with timezone awareness
-    const formatDueDateWithDays = (date) => {
-        if (!date) return 'Not scheduled';
-
-        const daysUntil = getDaysUntilDue(date);
-        if (daysUntil === null) return 'Not scheduled';
-
-        if (daysUntil < 0) return `Overdue by ${Math.abs(daysUntil)} days`;
-        if (daysUntil === 0) return 'Due today';
-        if (daysUntil === 1) return 'Due tomorrow';
-        return `Due in ${daysUntil} days`;
+    const formatMs = (ms) => {
+        if (!ms || ms === 0) return '—';
+        return ms < 1000 ? `${ms}ms` : `${(ms / 1000).toFixed(1)}s`;
     };
 
-    // Format time
-    const formatTime = (ms) => {
-        if (!ms || ms === 0) return 'N/A';
-        if (ms < 1000) return `${ms}ms`;
-        return `${(ms / 1000).toFixed(1)}s`;
-    };
-
-    // Format attempt with timezone awareness
     const formatAttemptDate = (dateString) => {
-        const date = new Date(dateString);
-        const now = new Date();
-        const diffDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
-
-        if (diffDays === 0) return 'Today';
-        if (diffDays === 1) return 'Yesterday';
-        if (diffDays < 7) return `${diffDays} days ago`;
-        return formatDateInTimezone(dateString, userTimezone, {
-            month: 'short',
-            day: 'numeric',
-            year: 'numeric'
-        });
+        const diff = Math.floor((Date.now() - new Date(dateString)) / 86400000);
+        if (diff === 0) return 'Today';
+        if (diff === 1) return 'Yesterday';
+        if (diff < 7) return `${diff}d ago`;
+        return formatDateInTimezone(dateString, userTimezone, { month: 'short', day: 'numeric' });
     };
 
     return (
-        <ModalComponent
-            title="Card Statistics"
-            isOpen={isOpen}
-            onClose={onClose}
-        >
-            <div className="fc-card-stats-modal">
+        <ModalComponent title="Card stats" isOpen={isOpen} onClose={onClose}>
+            <div className="csm-body">
                 {loading ? (
-                    <div className="fc-stats-loading">Loading statistics...</div>
-                ) : error ? (
-                    <div className="fc-stats-error">{error}</div>
+                    <div className="csm-loading">Loading statistics…</div>
                 ) : (
                     <>
-                        <div className="fc-stats-hero">
-                            <div className="fc-stats-card-info">
-                                <p className="fc-stats-question">{card.question}</p>
-                            </div>
+                        {/* Question preview */}
+                        <div className="csm-question">{card.question}</div>
 
-                            <div className="fc-stats-accuracy">
-                                <div className={`fc-stats-badge ${difficulty.class}`}>
-                                    <span className="fc-stats-percentage">{accuracyRate.toFixed(0)}%</span>
-                                    <span className="fc-stats-difficulty">{difficulty.label}</span>
+                        {/* Key metrics strip */}
+                        <div className="csm-metrics">
+                            <div className="csm-metric">
+                                <div className="csm-metric-value serif">
+                                    {accuracyRate.toFixed(0)}<span>%</span>
                                 </div>
+                                <div className="csm-metric-label">Accuracy</div>
                             </div>
-
-                            <div className="fc-stats-summary">
-                                <div className="fc-stats-item">
-                                    <span className="fc-stats-value">{timesCorrect}/{timesReviewed}</span>
-                                    <span className="fc-stats-label">Correct</span>
+                            <div className="csm-metric">
+                                <div className="csm-metric-value serif">
+                                    {timesCorrect}<span>/{timesReviewed}</span>
                                 </div>
-                                <div className={`fc-stats-item fc-trend-${trend.class}`}>
-                                    <span className="fc-stats-value">{trend.arrow} {trend.label}</span>
-                                    <span className="fc-stats-label">Trend</span>
+                                <div className="csm-metric-label">Correct</div>
+                            </div>
+                            <div className={`csm-metric csm-trend-${trend.cls}`}>
+                                <div className="csm-metric-value serif">{trend.symbol}</div>
+                                <div className="csm-metric-label">{trend.label}</div>
+                            </div>
+                            <div className="csm-metric">
+                                <div className={`csm-badge csm-badge-${difficulty.cls}`}>
+                                    {difficulty.label}
                                 </div>
+                                <div className="csm-metric-label">Status</div>
                             </div>
                         </div>
-                        <div className="fc-stats-section">
-                            <h3 className="fc-stats-section-title">Spaced Repetition</h3>
-                            <div className="fc-stats-grid">
-                                <div className="fc-stats-box">
-                                    <span className="fc-stats-icon">📅</span>
-                                    <div className="fc-stats-box-content">
-                                        <span className="fc-stats-box-label">Next Review</span>
-                                        <span className="fc-stats-box-value">{formatDueDateWithDays(card.due_date)}</span>
-                                    </div>
-                                </div>
-                                <div className="fc-stats-box">
-                                    <span className="fc-stats-icon">⏱️</span>
-                                    <div className="fc-stats-box-content">
-                                        <span className="fc-stats-box-label">Avg Response Time</span>
-                                        <span className="fc-stats-box-value">{formatTime(avgResponseTime)}</span>
-                                    </div>
-                                </div>
-                                <div className="fc-stats-box">
-                                    <span className="fc-stats-icon">🔄</span>
-                                    <div className="fc-stats-box-content">
-                                        <span className="fc-stats-box-label">Times Studied</span>
-                                        <span className="fc-stats-box-value">{timesReviewed}</span>
-                                    </div>
-                                </div>
-                                <div className="fc-stats-box">
-                                    <span className="fc-stats-icon">📈</span>
-                                    <div className="fc-stats-box-content">
-                                        <span className="fc-stats-box-label">Current Interval</span>
-                                        <span className="fc-stats-box-value">
-                                            {analytics?.current_interval_days
-                                                ? `${analytics.current_interval_days} days`
-                                                : 'New card'}
+
+                        {/* Spaced repetition detail rows */}
+                        <div className="csm-section-head">Spaced repetition</div>
+                        <div className="csm-detail-list">
+                            <div className="csm-detail-row">
+                                <span>Next review</span>
+                                <span>{formatDueLabel(card.due_date)}</span>
+                            </div>
+                            <div className="csm-detail-row">
+                                <span>Avg response time</span>
+                                <span>{formatMs(avgResponseTime)}</span>
+                            </div>
+                            <div className="csm-detail-row">
+                                <span>Times studied</span>
+                                <span>{timesReviewed}</span>
+                            </div>
+                            <div className="csm-detail-row">
+                                <span>Current interval</span>
+                                <span>
+                                    {analytics?.current_interval_days
+                                        ? `${analytics.current_interval_days} days`
+                                        : 'New card'}
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* Recent attempts */}
+                        <div className="csm-section-head">Recent attempts</div>
+                        {recentAttempts.length > 0 ? (
+                            <div className="csm-attempts">
+                                {recentAttempts.slice(0, 8).map((a, i) => (
+                                    <div key={i} className="csm-attempt-row">
+                                        <span className="csm-attempt-date">{formatAttemptDate(a.date)}</span>
+                                        <span className={`csm-attempt-result ${a.correct ? 'correct' : 'incorrect'}`}>
+                                            {a.correct ? '✓' : '✗'}
                                         </span>
+                                        <span className="csm-attempt-time">{formatMs(a.time_taken)}</span>
+                                        {a.similarity_score != null && (
+                                            <span className="csm-attempt-sim">
+                                                {(a.similarity_score * 100 % 1 === 0
+                                                    ? a.similarity_score * 100
+                                                    : (a.similarity_score * 100).toFixed(1))}% match
+                                            </span>
+                                        )}
+                                        <span className="csm-attempt-mode">{a.mode || 'study'}</span>
                                     </div>
-                                </div>
+                                ))}
                             </div>
-                        </div>
-                        <div className="fc-stats-section">
-                            <h3 className="fc-stats-section-title">Recent Attempts</h3>
-                            {recentAttempts.length > 0 ? (
-                                <div className="fc-stats-history">
-                                    {recentAttempts.slice(0, 10).map((attempt, index) => (
-                                        <div key={index} className="fc-stats-attempt">
-                                            <span className="fc-attempt-date">
-                                                {formatAttemptDate(attempt.date)}
-                                            </span>
-                                            <span className={`fc-attempt-result ${attempt.correct ? 'correct' : 'incorrect'}`}>
-                                                {attempt.correct ? '✓' : '✗'}
-                                            </span>
-                                            <span className="fc-attempt-time">
-                                                {formatTime(attempt.time_taken)}
-                                            </span>
-                                            {attempt.similarity_score && (
-                                                <span className="fc-attempt-similarity">
-                                                    {attempt.similarity_score % 1 === 0
-                                                        ? attempt.similarity_score
-                                                        : attempt.similarity_score.toFixed(2)}% match
-                                                </span>
-                                            )}
-                                            <span className="fc-attempt-mode">
-                                                {attempt.mode || 'Study'}
-                                            </span>
-                                        </div>
-                                    ))}
-                                </div>
-                            ) : (
-                                <div className="fc-stats-empty">
-                                    <p>No study history yet. Start studying to see your progress!</p>
-                                </div>
-                            )}
-                        </div>
+                        ) : (
+                            <div className="csm-empty">No study history yet.</div>
+                        )}
                     </>
                 )}
             </div>
