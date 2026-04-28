@@ -1,141 +1,144 @@
-// Modal Styles
 .fc-modal-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
+    inset: 0;
+    background: oklch(0.22 0.018 50 / 0.45);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    animation: fc-overlay-in 200ms ease;
+}
 
-    .fc-modal-content {
-        background: white;
-        border-radius: 12px;
-        width: 90%;
-        max-width: 600px;
-        max-height: 80vh;
-        overflow-y: auto;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+@keyframes fc-overlay-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
 
-        .fc-modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1.5rem;
-            border-bottom: 1px solid #e0e0e0;
+.fc-modal-content {
+    background: var(--bg-elev);
+    border: 1px solid var(--rule);
+    border-radius: var(--r-xl);
+    width: 90%;
+    max-width: 560px;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-lg);
+    animation: fc-modal-rise 240ms cubic-bezier(0.3, 0.7, 0.4, 1);
+}
 
-            h2 {
-                margin: 0;
-                font-size: 1.5rem;
-                color: #333;
-            }
+@keyframes fc-modal-rise {
+    from { opacity: 0; transform: translateY(16px) scale(0.98); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
 
-            .fc-modal-close {
-                background: none;
-                border: none;
-                font-size: 1.5rem;
-                cursor: pointer;
-                color: #666;
-                padding: 0;
-                width: 30px;
-                height: 30px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                border-radius: 4px;
-                transition: all 0.2s ease;
+.fc-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--rule-soft);
 
-                &:hover {
-                    background-color: #f8f9fa;
-                    color: #333;
-                }
-            }
-        }
+    h2 {
+        margin: 0;
+        font-family: "Newsreader", Georgia, serif;
+        font-size: 22px;
+        font-weight: 500;
+        letter-spacing: -0.008em;
+        color: var(--ink);
+    }
 
-        .fc-card-form {
-            padding: 1.5rem;
+    .fc-modal-close {
+        appearance: none;
+        background: transparent;
+        border: 0;
+        color: var(--ink-faint);
+        cursor: pointer;
+        width: 30px;
+        height: 30px;
+        display: grid;
+        place-items: center;
+        border-radius: var(--r-sm);
+        font-size: 20px;
+        transition: background 120ms, color 120ms;
 
-            .fc-form-group {
-                margin-bottom: 1.5rem;
-
-                label {
-                    display: block;
-                    font-weight: 600;
-                    color: #333;
-                    margin-bottom: 0.5rem;
-                    font-size: 1rem;
-                }
-
-                textarea {
-                    width: 100%;
-                    padding: 0.75rem;
-                    border: 1px solid #e0e0e0;
-                    border-radius: 8px;
-                    font-size: 1rem;
-                    font-family: inherit;
-                    resize: vertical;
-                    transition: border-color 0.2s ease;
-
-                    &:focus {
-                        outline: none;
-                        border-color: #007bff;
-                        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
-                    }
-                }
-            }
-
-            .fc-modal-actions {
-                display: flex;
-                gap: 1rem;
-                justify-content: flex-end;
-                padding-top: 1rem;
-                border-top: 1px solid #e0e0e0;
-
-                button {
-                    padding: 0.75rem 1.5rem;
-                    border: none;
-                    border-radius: 8px;
-                    font-size: 1rem;
-                    cursor: pointer;
-                    transition: all 0.2s ease;
-                    font-weight: 500;
-
-                    &.fc-btn-cancel {
-                        background-color: #f8f9fa;
-                        color: #495057;
-
-                        &:hover {
-                            background-color: #e9ecef;
-                        }
-                    }
-
-                    &.fc-btn-save {
-                        background-color: #007bff;
-                        color: white;
-
-                        &:hover {
-                            background-color: #0056b3;
-                        }
-                    }
-
-                    &:active {
-                        transform: scale(0.98);
-                    }
-                }
-            }
+        &:hover {
+            background: var(--bg-sunk);
+            color: var(--ink);
         }
     }
 }
 
-// Responsive design
-@media (max-width: 768px) {
-    .fc-modal-overlay {
-        .fc-modal-content {
-            width: 95%;
-            max-height: 90vh;
+.fc-card-form {
+    padding: 24px;
+
+    .fc-form-group {
+        margin-bottom: 18px;
+
+        label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--ink-faint);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            font-family: "JetBrains Mono", monospace;
+            margin-bottom: 6px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--rule);
+            border-radius: var(--r-md);
+            font: inherit;
+            font-size: 14.5px;
+            background: var(--bg);
+            color: var(--ink);
+            resize: vertical;
+            outline: none;
+            box-shadow: var(--shadow-sm);
+            transition: border-color 120ms;
+
+            &:focus { border-color: var(--accent); }
+            &::placeholder { color: var(--ink-faint); }
+        }
+    }
+
+    .fc-modal-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        padding-top: 16px;
+        border-top: 1px solid var(--rule-soft);
+
+        button {
+            appearance: none;
+            border: 1px solid var(--rule);
+            background: var(--bg-elev);
+            color: var(--ink);
+            padding: 10px 20px;
+            border-radius: var(--r-md);
+            font: inherit;
+            font-size: 13.5px;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+            transition: background 120ms, transform 80ms;
+
+            &:hover { background: var(--bg-sunk); }
+            &:active { transform: translateY(1px); }
+
+            &.fc-btn-cancel { color: var(--ink-soft); }
+
+            &.fc-btn-save {
+                background: var(--ink);
+                color: var(--bg);
+                border-color: var(--ink);
+
+                &:hover { background: var(--accent-ink); border-color: var(--accent-ink); }
+            }
         }
     }
 }

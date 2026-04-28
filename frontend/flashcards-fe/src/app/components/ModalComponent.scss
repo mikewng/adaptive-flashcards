@@ -1,107 +1,88 @@
 .fc-modal-backdrop {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+    inset: 0;
+    background: oklch(0.22 0.018 50 / 0.45);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1000;
     padding: 20px;
-    animation: fadeIn 0.2s ease;
+    animation: fc-modal-fade 200ms ease;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
 }
 
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
+@keyframes fc-modal-fade {
+    from { opacity: 0; }
+    to   { opacity: 1; }
 }
 
 .fc-modal-cpnt-wrapper {
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    max-width: 600px;
+    background: var(--bg-elev);
+    border: 1px solid var(--rule);
+    border-radius: var(--r-xl);
+    box-shadow: var(--shadow-lg);
+    max-width: 560px;
     width: 100%;
     max-height: 90vh;
     overflow: auto;
-    animation: slideUp 0.3s ease;
+    animation: fc-modal-up 240ms cubic-bezier(0.3, 0.7, 0.4, 1);
     display: flex;
     flex-direction: column;
 }
 
-@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+@keyframes fc-modal-up {
+    from { opacity: 0; transform: translateY(20px) scale(0.98); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .fc-modal-header-container {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1rem;
-    border-bottom: 1px solid #e2e8f0;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--rule-soft);
 }
 
 .fc-modal-title {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #2d3748;
+    font-family: "Newsreader", Georgia, serif;
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: -0.008em;
+    color: var(--ink);
     margin: 0;
 }
 
 .fc-modal-close-btn {
-    background: none;
-    border: none;
-    color: #718096;
+    appearance: none;
+    background: transparent;
+    border: 0;
+    color: var(--ink-faint);
     cursor: pointer;
-    padding: 0.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    transition: all 0.2s ease;
-}
+    padding: 6px;
+    display: grid;
+    place-items: center;
+    border-radius: var(--r-sm);
+    transition: background 120ms, color 120ms;
 
-.fc-modal-close-btn:hover {
-    background: #f7fafc;
-    color: #2d3748;
-}
-
-.fc-modal-close-btn:active {
-    background: #e2e8f0;
+    &:hover {
+        background: var(--bg-sunk);
+        color: var(--ink);
+    }
 }
 
 .fc-modal-content {
-    padding: 28px;
+    padding: 24px;
     flex: 1;
     overflow-y: auto;
+    color: var(--ink-soft);
+    font-size: 14.5px;
+    line-height: 1.6;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 600px) {
     .fc-modal-cpnt-wrapper {
-        max-width: 100%;
-        margin: 0;
-        border-radius: 12px;
-    }
-
-    .fc-modal-header-container {
-        padding: 20px;
-    }
-
-    .fc-modal-title {
-        font-size: 1.25rem;
+        border-radius: var(--r-lg);
     }
 
     .fc-modal-content {

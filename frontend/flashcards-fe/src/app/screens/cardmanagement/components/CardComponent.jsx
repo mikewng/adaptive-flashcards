@@ -4,74 +4,42 @@ import CardStatsModal from "./CardStatsModal";
 import { useAuth } from "../../../context/userAuthContext";
 import { formatDueDate, isOverdue } from "../../../utils/dateFormatter";
 
-const getDifficultyClass = (accuracyRate) => {
-    const ranges = [
-        { max: Infinity, min: 71, class: "easy" },
-        { max: 70, min: 40, class: "medium" },
-        { max: 39, min: 0, class: "hard" }
-    ];
-
-    return ranges.find(r => accuracyRate >= r.min && accuracyRate <= r.max)?.class || "none";
-};
-
-const CardComponent = ({ card, onEdit, onDelete }) => {
+const CardComponent = ({ card, index, onEdit, onDelete }) => {
     const [isStatsOpen, setIsStatsOpen] = useState(false);
     const { user } = useAuth();
     const userTimezone = user?.timezone || 'UTC';
     const cardIsOverdue = isOverdue(card.due_date);
 
-    return (
-        <div className={`fc-card-item ${getDifficultyClass(card.accuracy_rate)}`}>
-            <div className="fc-card-content">
-                <div className="fc-card-section">
-                    <p className="fc-card-text">{card.question}</p>
-                </div>
-                <div className="fc-card-section">
-                    <p className="fc-card-text">{card.answer}</p>
-                </div>
-                <div className="fc-card-section split">
-                    {
-                        card.due_date ?
-                            <p className={`fc-card-due-date ${cardIsOverdue ? 'overdue' : ''}`}>
-                                {formatDueDate(card.due_date, userTimezone)}
-                            </p>
-                            :
-                            <p>No due date</p>
-                    }
+    const accuracyRate = card.accuracy_rate ?? 0;
+    let statusLabel = 'new';
+    let statusClass = 'status-new';
+    if (card.times_seen > 0) {
+        if (accuracyRate >= 75) { statusLabel = 'mastered'; statusClass = 'status-mastered'; }
+        else if (accuracyRate >= 40) { statusLabel = 'learning'; statusClass = 'status-learning'; }
+        else { statusLabel = 'struggling'; statusClass = 'status-struggling'; }
+    }
 
-                </div>
-                <div className="fc-card-section">
-                    <div className="fc-card-actions">
-                        <button
-                            className="fc-card-action-btn fc-edit-btn"
-                            onClick={() => setIsStatsOpen(true)}
-                            title="Stats"
-                        >
-                            Stats
-                        </button>
-                        <button
-                            className="fc-card-action-btn fc-edit-btn"
-                            onClick={() => onEdit(card)}
-                            title="Edit"
-                        >
-                            Edit
-                        </button>
-                        <button
-                            className="fc-card-action-btn fc-delete-btn"
-                            onClick={() => onDelete(card.id)}
-                            title="Delete"
-                        >
-                            Delete
-                        </button>
-                    </div>
-                </div>
+    return (
+        <div className={`fc-card-row ${statusClass}`}>
+            <div className="fc-card-num">{String((index ?? 0) + 1).padStart(2, '0')}</div>
+            <div className="fc-card-front">{card.question}</div>
+            <div className="fc-card-back">{card.answer}</div>
+            <div className="fc-card-due">
+                {card.due_date
+                    ? <span className={cardIsOverdue ? 'overdue' : ''}>{formatDueDate(card.due_date, userTimezone)}</span>
+                    : <span className="no-date">—</span>}
+            </div>
+            <div className="fc-card-status">
+                <span className="fc-status-dot" />
+                {statusLabel}
+            </div>
+            <div className="fc-card-actions">
+                <button className="fc-card-action stats" onClick={() => setIsStatsOpen(true)}>Stats</button>
+                <button className="fc-card-action edit" onClick={() => onEdit(card)}>Edit</button>
+                <button className="fc-card-action del" onClick={() => onDelete(card.id)}>Delete</button>
             </div>
 
-            <CardStatsModal
-                card={card}
-                isOpen={isStatsOpen}
-                onClose={() => setIsStatsOpen(false)}
-            />
+            <CardStatsModal card={card} isOpen={isStatsOpen} onClose={() => setIsStatsOpen(false)} />
         </div>
     );
 };

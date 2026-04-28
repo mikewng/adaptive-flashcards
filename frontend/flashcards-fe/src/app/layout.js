@@ -1,9 +1,9 @@
 'use client'
+import "./globals.css"
 import "./App.scss"
 import "./screens/layout/BaseLayout.scss"
 import { AuthProvider } from './context/userAuthContext'
 import Navbar from './components/Navbar'
-import Footer from './components/Footer'
 import { DeckProvider } from "./context/deckContext"
 import { StudySessionProvider } from "./context/studySessionContext"
 
@@ -11,10 +11,13 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
-        <title>Adaptive Flashcards</title>
+        <title>Cardex · Flashcards</title>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />
-        <link href="https://fonts.googleapis.com/css2?family=Alan+Sans:wght@300..900&family=Sen:wght@400..800&display=swap" rel="stylesheet" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&family=Inter+Tight:wght@400;450;500;550;600&family=JetBrains+Mono:wght@400;500&display=swap"
+          rel="stylesheet"
+        />
       </head>
       <body>
         <AuthProvider>
@@ -25,7 +28,6 @@ export default function RootLayout({ children }) {
                 <main className="fc-screen-container">
                   {children}
                 </main>
-                <Footer />
               </div>
             </StudySessionProvider>
           </DeckProvider>

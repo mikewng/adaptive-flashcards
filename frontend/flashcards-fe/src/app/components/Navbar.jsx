@@ -2,20 +2,37 @@
 
 import "./Navbar.scss"
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "../context/userAuthContext";
 import { useState } from "react";
 import DeckUpdateModal from "../screens/deckview/components/DeckUpdateModal";
 
+const LibraryIcon = () => (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M2.5 3.5h2v9h-2zM5.5 3.5h2v9h-2zM10.7 3.7l1.9.5-2.1 7.7-1.9-.5z" />
+    </svg>
+);
+const CompassIcon = () => (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M8 14.5a6.5 6.5 0 1 0 0-13 6.5 6.5 0 0 0 0 13zM10.5 5.5l-1 4-4 1 1-4z" />
+    </svg>
+);
+const SettingsIcon = () => (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M8 5.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM8 1.5v1.5M8 13v1.5M3 8H1.5M14.5 8H13M4.4 4.4L3.4 3.4M12.6 12.6l-1-1M4.4 11.6l-1 1M12.6 3.4l-1 1" />
+    </svg>
+);
+const PlusIcon = () => (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M8 3v10M3 8h10" />
+    </svg>
+);
+
 const Navbar = () => {
     const router = useRouter();
+    const pathname = usePathname();
     const { user, isAuthenticated, logout } = useAuth();
     const [createDeck, setCreateDeck] = useState(false);
-    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-    const handleLoginClick = () => {
-        router.push("/pages/login");
-    };
 
     const handleLogout = () => {
         logout();
@@ -23,103 +40,104 @@ const Navbar = () => {
     };
 
     const handleModalClose = () => {
-        setCreateDeck(false)
-    }
+        setCreateDeck(false);
+    };
+
+    const isActive = (href) => pathname === href || pathname?.startsWith(href + '/');
+
+    const userInitial = user?.first_name
+        ? user.first_name[0].toUpperCase()
+        : user?.email
+            ? user.email[0].toUpperCase()
+            : '?';
+
+    const displayName = user?.first_name || user?.last_name
+        ? `${user.first_name || ''} ${user.last_name || ''}`.trim()
+        : user?.email || 'Guest';
 
     return (
-        <nav className="fc-navbar-cpnt-wrapper">
-            {
-                createDeck &&
-                <DeckUpdateModal onClose={handleModalClose} />
-            }
-            <div className="fc-navbar-content">
-                <div className="fc-navbar-brand">
-                    <span className="fc-navbar-title">
-                        <Link href="/pages/decks" className="fc-nav-link" onClick={() => setMobileMenuOpen(false)}>
-                            Adaptive Flashcards
-                        </Link>
-                    </span>
-                </div>
+        <aside className="fc-sidebar">
+            {createDeck && <DeckUpdateModal onClose={handleModalClose} />}
 
-                {/* Hamburger Menu Button */}
-                <button
-                    className="fc-mobile-menu-toggle"
-                    onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                    aria-label="Toggle menu"
-                >
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        {mobileMenuOpen ? (
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                        ) : (
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                        )}
-                    </svg>
-                </button>
-
-                {/* Desktop & Mobile Menu */}
-                <div className={`fc-navbar-links ${mobileMenuOpen ? 'mobile-open' : ''}`}>
-                    {
-                        !isAuthenticated &&
-                        <div className="fc-nav-option">
-                            <Link href="/" className="fc-nav-link" onClick={() => setMobileMenuOpen(false)}>Home</Link>
-                        </div>
-                    }
-                    <div className="fc-nav-option">
-                        <Link href="/pages/public-decks" className="fc-nav-link" onClick={() => setMobileMenuOpen(false)}>
-                            Browse Public Decks
-                        </Link>
-                    </div>
-                    {
-                        isAuthenticated &&
-                        <div className="fc-auth-links">
-                            <div className="fc-nav-option">
-                                <div
-                                    className="fc-nav-link"
-                                    onClick={() => {
-                                        setCreateDeck(true);
-                                        setMobileMenuOpen(false);
-                                    }}
-                                >
-                                    Create...
-                                </div>
-                            </div>
-                            <div className="fc-nav-option">
-                                <Link href="/pages/decks" className="fc-nav-link" onClick={() => setMobileMenuOpen(false)}>My Decks</Link>
-                            </div>
-                            <div className="fc-nav-option">
-                                <Link href="/pages/profile" className="fc-nav-link" onClick={() => setMobileMenuOpen(false)}>Profile</Link>
-                            </div>
-                        </div>
-                    }
-
-                    <div className="fc-nav-account-container">
-                        {isAuthenticated ? (
-                            <>
-                                <span className="fc-nav-user-email">
-                                    {user?.first_name || user?.last_name
-                                        ? `${user.first_name || ''} ${user.last_name || ''}`.trim()
-                                        : user?.email}
-                                </span>
-                                <button className="fc-nav-button" onClick={() => {
-                                    handleLogout();
-                                    setMobileMenuOpen(false);
-                                }}>
-                                    Logout
-                                </button>
-                            </>
-                        ) : (
-                            <button className="fc-nav-button" onClick={() => {
-                                handleLoginClick();
-                                setMobileMenuOpen(false);
-                            }}>
-                                Sign In
-                            </button>
-                        )}
-                    </div>
-                </div>
+            <div className="fc-sidebar-brand">
+                <div className="fc-brand-mark" />
+                <span>Cardex</span>
             </div>
-        </nav>
-    )
-}
 
-export default Navbar
+            <nav className="fc-sidebar-nav">
+                {isAuthenticated && (
+                    <Link
+                        href="/pages/decks"
+                        className={`fc-nav-item ${isActive('/pages/decks') ? 'active' : ''}`}
+                    >
+                        <LibraryIcon />
+                        Library
+                    </Link>
+                )}
+
+                <Link
+                    href="/pages/public-decks"
+                    className={`fc-nav-item ${isActive('/pages/public-decks') ? 'active' : ''}`}
+                >
+                    <CompassIcon />
+                    Discover
+                </Link>
+
+                {isAuthenticated && (
+                    <>
+                        <div className="fc-nav-section-title">Actions</div>
+                        <button
+                            className="fc-nav-item fc-nav-btn"
+                            onClick={() => setCreateDeck(true)}
+                        >
+                            <PlusIcon />
+                            New Deck
+                        </button>
+                        <Link
+                            href="/pages/profile"
+                            className={`fc-nav-item ${isActive('/pages/profile') ? 'active' : ''}`}
+                        >
+                            <SettingsIcon />
+                            Profile
+                        </Link>
+                    </>
+                )}
+
+                {!isAuthenticated && (
+                    <>
+                        <div className="fc-nav-section-title">Account</div>
+                        <Link
+                            href="/"
+                            className={`fc-nav-item ${pathname === '/' ? 'active' : ''}`}
+                        >
+                            Home
+                        </Link>
+                    </>
+                )}
+            </nav>
+
+            <div className="fc-sidebar-foot">
+                {isAuthenticated ? (
+                    <>
+                        <div className="fc-avatar">{userInitial}</div>
+                        <div className="fc-avatar-meta">
+                            <b>{displayName}</b>
+                        </div>
+                        <button className="fc-logout-btn" onClick={handleLogout}>
+                            Sign out
+                        </button>
+                    </>
+                ) : (
+                    <button
+                        className="fc-signin-btn"
+                        onClick={() => router.push('/pages/login')}
+                    >
+                        Sign In
+                    </button>
+                )}
+            </div>
+        </aside>
+    );
+};
+
+export default Navbar;

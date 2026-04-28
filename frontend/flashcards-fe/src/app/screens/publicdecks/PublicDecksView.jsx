@@ -7,38 +7,53 @@ import { useAuth } from '../../context/userAuthContext';
 import './PublicDecksView.scss';
 import ModalComponent from '../../components/ModalComponent';
 
-const PublicDeckCard = ({ deck, onCopy, onClick, isAuthenticated }) => {
-    return (
-        <div className="fc-public-deck-card" onClick={() => onClick(deck.id)}>
-            <div className="fc-deck-header">
-                <h3 className="fc-deck-name">{deck.name}</h3>
+const SearchIcon = () => (
+    <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M11.5 11.5l3 3M7 12.5a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11z" />
+    </svg>
+);
+const CopyIcon = () => (
+    <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M5 5V2.5h8.5V11H11M2.5 5H11v8.5H2.5z" />
+    </svg>
+);
+const ArrowRightIcon = () => (
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M6.5 4l4.5 4-4.5 4M3 8h8" />
+    </svg>
+);
+
+const PublicDeckCard = ({ deck, onCopy, onClick, isAuthenticated }) => (
+    <button className="fc-pub-deck-card" onClick={() => onClick(deck.id)}>
+        <div className="fc-pub-deck-stack">
+            <div className="fc-pub-deck-stack-2" />
+            <div className="fc-pub-deck-stack-3" />
+        </div>
+        <div className="fc-pub-deck-inner">
+            <div className="fc-pub-deck-tag">
+                <span className="fc-pub-deck-dot" />
+                Public
+            </div>
+            <h3 className="fc-pub-deck-title">{deck.name}</h3>
+            {deck.description && (
+                <p className="fc-pub-deck-blurb">{deck.description}</p>
+            )}
+            <div className="fc-pub-deck-meta">
+                <span>{deck.card_count} card{deck.card_count !== 1 ? 's' : ''}</span>
+                <span className="fc-pub-deck-owner">by {deck.owner_username}</span>
                 {isAuthenticated && (
                     <button
-                        className="fc-copy-btn"
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            onCopy(deck.id);
-                        }}
+                        className="fc-pub-copy-btn"
+                        onClick={(e) => { e.stopPropagation(); onCopy(deck.id); }}
                         title="Copy this deck to your library"
                     >
-                        Copy
+                        <CopyIcon /> Save
                     </button>
                 )}
             </div>
-            <div className="fc-deck-info">
-                {deck.description && (
-                    <p className="fc-deck-description">{deck.description}</p>
-                )}
-                <div className="fc-deck-meta">
-                    <span className="fc-card-count">
-                        {deck.card_count} {deck.card_count === 1 ? 'card' : 'cards'}
-                    </span>
-                    <span className="fc-deck-owner">by {deck.owner_username}</span>
-                </div>
-            </div>
         </div>
-    );
-};
+    </button>
+);
 
 const PublicDecksView = () => {
     const [decks, setDecks] = useState([]);
@@ -50,14 +65,12 @@ const PublicDecksView = () => {
     const { isAuthenticated } = useAuth();
     const router = useRouter();
 
-    useEffect(() => {
-        fetchPublicDecks();
-    }, []);
+    useEffect(() => { fetchPublicDecks(); }, []);
 
     const fetchPublicDecks = async (search = null) => {
         try {
             setLoading(true);
-            const response = await flashcardApiService.getPublicDecks(0, 6, search);
+            const response = await flashcardApiService.getPublicDecks(0, 12, search);
             setDecks(response);
             setError(null);
         } catch (err) {
@@ -74,108 +87,98 @@ const PublicDecksView = () => {
     };
 
     const handleCopyDeck = async (deckId) => {
-        if (!isAuthenticated) {
-            alert('Please sign in to copy decks');
-            return;
-        }
-
+        if (!isAuthenticated) { alert('Please sign in to copy decks'); return; }
         try {
-            const copiedDeck = await flashcardApiService.copyDeck(deckId);
-            setCopiedDeck(copiedDeck);
+            const copied = await flashcardApiService.copyDeck(deckId);
+            setCopiedDeck(copied);
             setCopyModalOpen(true);
-        } catch (err) {
-            console.error('Error copying deck:', err);
-            alert('Failed to copy deck. Please try again.');
-        }
+        } catch { alert('Failed to copy deck. Please try again.'); }
     };
 
-    const handleGoToDeck = () => {
-        if (copiedDeck) {
-            router.push(`/pages/decks/${copiedDeck.id}`);
-        }
-    };
-
-    const handleDeckClick = (deckId) => {
-        router.push(`/pages/public-decks/${deckId}`);
-    };
+    const handleDeckClick = (deckId) => router.push(`/pages/public-decks/${deckId}`);
 
     if (loading) {
         return (
-            <div className="fc-public-decks-wrapper">
-                <div className="fc-loading">Loading public decks...</div>
+            <div className="fc-pub-wrapper">
+                <div className="fc-pub-loading">Loading community decks…</div>
             </div>
         );
     }
 
     if (error) {
         return (
-            <div className="fc-public-decks-wrapper">
-                <div className="fc-error">{error}</div>
+            <div className="fc-pub-wrapper">
+                <div className="fc-pub-error">{error}</div>
             </div>
         );
     }
 
     return (
-        <div className="fc-public-decks-wrapper">
+        <div className="fc-pub-wrapper">
             {copyModalOpen && (
                 <ModalComponent
-                    title="Deck Copied Successfully!"
+                    title="Deck copied!"
                     onClose={() => setCopyModalOpen(false)}
                     isOpen={copyModalOpen}
                 >
-                    <p>The deck has been copied to your library.</p>
-                    <div style={{ display: 'flex', gap: '10px', marginTop: '20px', justifyContent: 'flex-end' }}>
-                        <button onClick={() => setCopyModalOpen(false)} style={{ padding: '8px 16px' }}>
-                            Close
-                        </button>
+                    <p style={{ color: 'var(--ink-soft)', margin: '0 0 20px' }}>
+                        The deck has been added to your library.
+                    </p>
+                    <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+                        <button className="fc-pub-modal-btn" onClick={() => setCopyModalOpen(false)}>Close</button>
                         <button
-                            onClick={handleGoToDeck}
-                            style={{ padding: '8px 16px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                            className="fc-pub-modal-btn primary"
+                            onClick={() => { if (copiedDeck) router.push(`/pages/decks/${copiedDeck.id}`); }}
                         >
-                            Go to Deck
+                            Go to Deck <ArrowRightIcon />
                         </button>
                     </div>
                 </ModalComponent>
             )}
 
-            <div className="fc-public-decks-header">
-                <h1>Browse Public Decks</h1>
-                <p className="fc-subtitle">Discover and copy decks shared by the community</p>
+            {/* Topbar */}
+            <div className="fc-pub-topbar">
+                <div>
+                    <h1 className="fc-pub-title">Find your next <em>deck</em></h1>
+                    <div className="fc-pub-sub">Community decks · shared by learners</div>
+                </div>
             </div>
 
-            <div className="fc-search-section">
-                <form onSubmit={handleSearch} className="fc-search-form">
+            {/* Hero search */}
+            <div className="fc-pub-hero">
+                <h2>What would you like to <em>learn</em> today?</h2>
+                <p>Search decks shared by the community, then copy any deck straight to your library.</p>
+                <form onSubmit={handleSearch} className="fc-pub-search">
+                    <SearchIcon />
                     <input
-                        type="text"
-                        placeholder="Search decks by name or description..."
+                        placeholder="Search by name or description…"
                         value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="fc-search-input"
+                        onChange={e => setSearchQuery(e.target.value)}
                     />
-                    <button type="submit" className="fc-search-btn">
-                        Search
-                    </button>
+                    <button type="submit" className="fc-pub-search-btn">Search</button>
                 </form>
             </div>
-            <div className="fc-decks-list">
-                <div className='fc-decks-header'>Recently Published Decks</div>
-                <div className='fc-decks-container'>
-                    {decks.length > 0 ? (
-                        decks.map((deck) => (
-                            <PublicDeckCard
-                                key={deck.id}
-                                deck={deck}
-                                onCopy={handleCopyDeck}
-                                onClick={handleDeckClick}
-                                isAuthenticated={isAuthenticated}
-                            />
-                        ))
-                    ) : (
-                        <div className="fc-no-decks">
-                            <p>No public decks found. Try a different search term.</p>
-                        </div>
-                    )}
-                </div>
+
+            {/* Section */}
+            <div className="fc-pub-section-head">
+                <h2>Recently published</h2>
+                <span className="fc-pub-meta">{decks.length} deck{decks.length !== 1 ? 's' : ''}</span>
+            </div>
+
+            <div className="fc-pub-decks-grid">
+                {decks.length > 0 ? (
+                    decks.map(deck => (
+                        <PublicDeckCard
+                            key={deck.id}
+                            deck={deck}
+                            onCopy={handleCopyDeck}
+                            onClick={handleDeckClick}
+                            isAuthenticated={isAuthenticated}
+                        />
+                    ))
+                ) : (
+                    <div className="fc-pub-no-decks">No public decks found. Try a different search term.</div>
+                )}
             </div>
         </div>
     );

@@ -1,185 +1,154 @@
-.fc-study-wrapper {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-    min-height: 100vh;
+/* Full-screen review overlay — sits above the sidebar */
+.fc-review-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: var(--bg);
     display: flex;
     flex-direction: column;
+    padding: 28px 36px 36px;
+    animation: fc-review-in 320ms cubic-bezier(0.3, 0.7, 0.4, 1);
+}
 
-    .fc-study-header {
-        text-align: center;
-        margin-bottom: 30px;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
+@keyframes fc-review-in {
+    from { opacity: 0; transform: scale(0.985); }
+    to   { opacity: 1; transform: scale(1); }
+}
 
-        h1 {
-            font-size: 2rem;
-            color: #333;
-            margin: 0;
-        }
+/* Header row */
+.fc-review-head {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-shrink: 0;
+}
 
-        .fc-study-mode-badge {
-            display: inline-block;
-            background-color: #4CAF50;
-            color: white;
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            align-self: center;
-        }
+.fc-review-exit-btn {
+    appearance: none;
+    border: 1px solid var(--rule);
+    background: var(--bg-elev);
+    color: var(--ink-soft);
+    padding: 8px 14px;
+    border-radius: var(--r-md);
+    font: inherit;
+    font-size: 13.5px;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: var(--shadow-sm);
+    transition: background 120ms, color 120ms;
+    white-space: nowrap;
 
-        .fc-progress {
-            font-size: 1.2rem;
-            color: #666;
-            font-weight: 500;
-        }
-    }
-
-    .fc-study-content {
-        flex: 0.5;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin-bottom: 1rem;
-
-        .fc-shuffle-toggle {
-            align-self: center;
-            padding: 10px 20px;
-            font-size: 0.95rem;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            background-color: #fff;
-            color: #666;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 500;
-            margin-bottom: 1rem;
-
-            &:hover {
-                border-color: #4CAF50;
-                background-color: #f8f9fa;
-                transform: translateY(-1px);
-                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-            }
-
-            &.active {
-                border-color: #4CAF50;
-                background-color: #4CAF50;
-                color: white;
-
-                &:hover {
-                    background-color: #45a049;
-                    border-color: #45a049;
-                }
-            }
-
-            &:active {
-                transform: translateY(0);
-            }
-        }
-    }
-
-    .fc-study-controls {
-        display: flex;
-        justify-content: center;
-        gap: 20px;
-        padding: 20px 0;
-
-        .fc-control-btn {
-            padding: 12px 30px;
-            font-size: 1rem;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 500;
-
-            &.fc-prev-btn,
-            &.fc-next-btn {
-                background-color: #4CAF50;
-                color: white;
-
-                &:hover:not(:disabled) {
-                    background-color: #45a049;
-                    transform: translateY(-2px);
-                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-                }
-
-                &:disabled {
-                    background-color: #ccc;
-                    cursor: not-allowed;
-                    opacity: 0.5;
-                }
-            }
-
-            &.fc-back-btn-inline {
-                background-color: #6c757d;
-                color: white;
-
-                &:hover {
-                    background-color: #5a6268;
-                    transform: translateY(-2px);
-                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-                }
-            }
-        }
-    }
-
-    .fc-loading,
-    .fc-error,
-    .fc-no-cards {
-        text-align: center;
-        padding: 40px;
-        font-size: 1.2rem;
-        color: #666;
-    }
-
-    .fc-error {
-        color: #d32f2f;
-    }
-
-    .fc-back-btn {
-        margin: 20px auto;
-        display: block;
-        padding: 12px 30px;
-        background-color: #6c757d;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-size: 1rem;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-
-        &:hover {
-            background-color: #5a6268;
-        }
+    &:hover {
+        background: var(--bg-sunk);
+        color: var(--ink);
     }
 }
 
-@media (max-width: 768px) {
-    .fc-study-wrapper {
-        padding: 15px;
+.fc-review-progress {
+    flex: 1;
+    height: 3px;
+    background: var(--bg-sunk);
+    border-radius: 999px;
+    overflow: hidden;
+    position: relative;
 
-        .fc-study-header {
-            h1 {
-                font-size: 1.5rem;
-            }
+    i {
+        display: block;
+        height: 100%;
+        background: var(--accent);
+        border-radius: 999px;
+        transition: width 360ms cubic-bezier(0.3, 0.7, 0.4, 1);
+    }
+}
 
-            .fc-shuffle-toggle {
-                font-size: 0.85rem;
-                padding: 8px 16px;
-            }
-        }
+.fc-review-counter {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 13px;
+    color: var(--ink-faint);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
 
-        .fc-study-controls {
-            flex-direction: column;
-            gap: 10px;
+/* Card stage — centred vertically */
+.fc-review-stage {
+    flex: 1;
+    display: grid;
+    place-items: center;
+    padding: 24px 0;
+}
 
-            .fc-control-btn {
-                width: 100%;
-            }
-        }
+/* Bottom controls */
+.fc-review-controls {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    flex-shrink: 0;
+    min-height: 56px;
+    align-items: center;
+}
+
+.fc-review-btn {
+    appearance: none;
+    border: 1px solid var(--rule);
+    background: var(--bg-elev);
+    color: var(--ink);
+    padding: 12px 24px;
+    border-radius: var(--r-lg);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: var(--shadow-sm);
+    transition: transform 100ms ease, background 120ms ease;
+    min-width: 120px;
+    justify-content: center;
+
+    &:hover:not(:disabled) {
+        background: var(--bg-sunk);
+        transform: translateY(-1px);
+    }
+
+    &:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+    }
+
+    &.active {
+        border-color: var(--accent);
+        color: var(--accent-ink);
+        background: var(--accent-soft);
+    }
+}
+
+/* Loading inside overlay */
+.fc-review-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    color: var(--ink-faint);
+    font-family: "JetBrains Mono", monospace;
+    font-size: 13px;
+}
+
+@media (max-width: 600px) {
+    .fc-review-overlay {
+        padding: 16px 16px 24px;
+    }
+
+    .fc-review-controls {
+        flex-wrap: wrap;
+    }
+
+    .fc-review-btn {
+        min-width: 100px;
+        padding: 10px 16px;
+        font-size: 13px;
     }
 }

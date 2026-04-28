@@ -1,51 +1,57 @@
 .fc-feature-card {
-    padding: 1.5rem;
-    background: white;
-    border-radius: 1rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    transition: box-shadow 0.2s ease;
+    padding: 24px;
+    background: var(--bg-elev);
+    border: 1px solid var(--rule);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-sm);
+    text-align: left;
+    transition: box-shadow 200ms, transform 200ms;
+
+    &:hover {
+        box-shadow: var(--shadow-md);
+        transform: translateY(-2px);
+    }
 }
 
 .fc-feature-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 0.75rem;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--r-md);
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 1rem;
+    margin-bottom: 14px;
+    background: var(--accent-soft);
 
     svg {
-        width: 24px;
-        height: 24px;
+        width: 20px;
+        height: 20px;
+        color: var(--accent-ink);
     }
 }
 
 .fc-feature-icon-indigo {
-    background: #e0e7ff;
-
-    svg {
-        color: #6366f1;
-    }
+    background: var(--accent-soft);
+    svg { color: var(--accent-ink); }
 }
 
 .fc-feature-icon-purple {
-    background: #fae8ff;
-
-    svg {
-        color: #9333ea;
-    }
+    background: var(--accent-soft);
+    svg { color: var(--accent-ink); }
 }
 
 .fc-feature-title {
-    font-weight: 600;
-    font-size: 1.125rem;
-    margin: 0 0 0.5rem 0;
+    font-family: "Newsreader", Georgia, serif;
+    font-weight: 500;
+    font-size: 18px;
+    letter-spacing: -0.005em;
+    margin: 0 0 8px;
+    color: var(--ink);
 }
 
 .fc-feature-description {
-    color: #4b5563;
-    font-size: 0.875rem;
+    color: var(--ink-soft);
+    font-size: 13.5px;
     margin: 0;
-    line-height: 1.5;
+    line-height: 1.55;
 }
